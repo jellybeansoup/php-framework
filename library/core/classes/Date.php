@@ -14,7 +14,7 @@
   * Arr
   */
 
-	class Date extends Object implements DebugValue {
+	class Date extends Object {
 
 	 /**
 	  * The timestamp representing the date.

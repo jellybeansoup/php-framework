@@ -14,7 +14,7 @@
   * Class Manager
   */
 
-  	class Path extends Object implements DebugValue {
+  	class Path extends Object {
 
 //
 // Properties
