@@ -60,14 +60,14 @@
 	  * @var \Framework\Core\Path
 	  */
 
-		public $rootPath;
+		private $_rootPath;
 
 	 /**
 	  * The path, not including the root path
 	  * @var \Framework\Core\Path
 	  */
 
-		public $path;
+		private $_path;
 
 	 /**
 	  * The query string, parsed as a URL
@@ -88,6 +88,8 @@
 	  */
 
 		protected static $_dynamicProperties = array(
+			'path',
+			'rootPath',
 			'absoluteString',
 			'baseString',
 			'extendedPath',
@@ -136,12 +138,12 @@
 				$this->host = $_SERVER['HTTP_HOST'];
 				if( isset( $_SERVER['PATH_INFO'] ) ) {
 					$pos = strrpos( $_SERVER['REQUEST_URI'], $_SERVER['PATH_INFO'] );
-					$this->rootPath = new Path( substr( $_SERVER['REQUEST_URI'], 0, $pos ) );
+					$this->rootPath = substr( $_SERVER['REQUEST_URI'], 0, $pos );
 				}
 				else {
-					$pos = strlen( $_SERVER['DOCUMENT_ROOT'] )-1;
-					$document_root = document_root();
-					$this->rootPath = new Path( substr( $document_root, $pos, strlen( $document_root )-$pos ) );
+					$server_root = trim_slashes( $_SERVER['DOCUMENT_ROOT'] );
+					$site_root = trim_slashes( document_root() );
+					$this->rootPath = substr( $site_root, strlen( $server_root ) );
 				}
 			}
 			// Port
@@ -167,7 +169,7 @@
 			// Path
 			if( isset( $segments['path'] ) ) {
 				$segments['path'] = ( substr( $segments['path'], 0, 1 ) === '/' ) ? $segments['path'] : '/'.$segments['path'];
-				$this->path = new Path( $segments['path'] );
+				$this->path = $segments['path'];
 				// We only want the root path once
 				if( $this->rootPath && $this->path->isSubpathOf( $this->rootPath ) ) {
 					$this->rootPath = null;
@@ -412,6 +414,84 @@
 				$relative[] = $part;
 			}
 			return implode( '/', $relative );
+		}
+
+//
+// Modifying the Path
+//
+
+	 /**
+	  * Set the URL's root path, which points to the root of the site.
+	  *
+	  * @param \Framework\Core\Path|string $path The path you want to provide the URL.
+	  * @return void
+	  */
+
+		public function setRootPath( $rootPath ) {
+			// If we're given a Path object or null
+			if( $rootPath instanceof Path || $rootPath === null ) {
+				$this->_rootPath = $rootPath;
+			}
+			// If we're given a string
+			else if( is_string( $rootPath ) ) {
+				$this->_rootPath = path( $rootPath );
+			}
+			// If all else fails, throw an exception
+			else {
+				throw new \InvalidArgumentException;
+			}
+		}
+
+	 /**
+	  * Fetches the path that points to the root of the site.
+	  *
+	  * @return \Framework\Core\Path The root path.
+	  */
+
+		public function rootPath() {
+			// We have null
+			if( ! $this->_rootPath instanceof Path ) {
+				return path( '/' );
+			}
+			// Return the actual stored path
+			return $this->_rootPath;
+		}
+
+	 /**
+	  * Set the URL's path, not including the root path.
+	  *
+	  * @param \Framework\Core\Path|string $path The path you want to provide the URL.
+	  * @return void
+	  */
+
+		public function setPath( $path ) {
+			// If we're given a Path object or null
+			if( $path instanceof Path || $path === null ) {
+				$this->_path = $path;
+			}
+			// If we're given a string
+			else if( is_string( $path ) ) {
+				$this->_path = path( $path );
+			}
+			// If all else fails, throw an exception
+			else {
+				throw new \InvalidArgumentException;
+			}
+		}
+
+	 /**
+	  * Fetches the path, not including the root path.
+	  *
+	  * @return \Framework\Core\Path The path.
+	  */
+
+		public function path() {
+			// We have null
+			if( ! $this->_path instanceof Path ) {
+				return path( '/' );
+			}
+			// Return the actual stored path
+			return $this->_path;
 		}
 
 //

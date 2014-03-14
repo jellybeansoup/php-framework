@@ -78,6 +78,18 @@
 	}
 
  /**
+  * Remove unwanted slashes (and whitespace!) from the start and end of the given string.
+  * Removes both forward and back slashes.
+  *
+  * @param array $string The string to trim slashes from.
+  * @return string The altered string.
+  */
+
+	function trim_slashes( $string ) {
+		return trim( $string, "\/\\ \t\n\r\0\x0B" );
+	}
+
+ /**
   * Remove unwanted slashes from a string.
   *
   * @param array $string The string to remove slashes from.
