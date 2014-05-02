@@ -250,7 +250,7 @@
 		public function setBody( $body ) {
 	  		// Check the given parameters
 		  	if( ! ( is_scalar( $body ) || ( is_object( $body ) && method_exists( $body, '__toString' ) ) ) ) {
-				throw new \InvalidArgumentException( 'The response body is expected to be a string.' );
+				throw new \InvalidArgumentException( 'The response body is expected to be a scalar value.' );
 		  	}
 			// Store the code value
 			$this->_body = $body;

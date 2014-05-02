@@ -11,6 +11,12 @@
   * @license FreeBSD
   */
 
+	// Determine the base directory
+	if( ! defined('__BASEDIR__') ) {
+		$backtrace = end( debug_backtrace() );
+		define('__BASEDIR__',dirname($backtrace['file']));
+	}
+
  /**
   * Library class.
   *
@@ -100,6 +106,8 @@
 	  */
 
 		public static function forNamespace( $namespace ) {
+		  	// Get the base directory
+	  		$basedir = defined('__BASEDIR__')?__BASEDIR__:dirname(__FILE__);
 	  		// Check the given parameters
 		  	if( ! is_string( $namespace ) ) {
 				throw new \InvalidArgumentException( 'Namespace is expected to be a string.' );
@@ -110,34 +118,37 @@
 			if( count( $segments ) === 1 ) {
 				$segments[0] = strtolower( $segments[0] );
 				// Extension libraries
-				if( is_dir( dirname( __FILE__ ).'/library/'.$segments[0] ) ) {
+				if( is_dir( $basedir.'/library/'.$segments[0] ) ) {
 					array_unshift( $segments, 'library' );
 				}
 				// Site libraries
-				else if( is_dir( dirname( __FILE__ ).'/sites/'.$segments[0] ) ) {
+				else if( is_dir( $basedir.'/sites/'.$segments[0] ) ) {
 					array_unshift( $segments, 'sites' );
 				}
 				// Can't find the library
-				else if( ! is_dir( dirname( __FILE__ ).'/'.$segments[0] ) ) {
+				else if( ! is_dir( $basedir.'/'.$segments[0] ) ) {
 					throw new \Exception( 'Library `'.$segments[0].'` does not exist.' );
 				}
+				array_unshift( $segments, $basedir );
 			}
 			// Framework libraries
 			else if( count( $segments ) === 2 && $segments[0] === 'Framework' ) {
 				$segments[0] = 'library';
 				$segments[1] = strtolower( $segments[1] );
+				array_unshift( $segments, dirname(__FILE__) );
 			}
 			// Site libraries
 			else if( count( $segments ) === 2 && $segments[0] === 'Site' ) {
 				$segments[0] = 'sites';
 				$segments[1] = strtolower( $segments[1] );
+				array_unshift( $segments, $basedir );
 			}
 			// Invalid library namespace
 			else {
 				throw new \InvalidLibraryException( 'The namespace `'.$namespace.'` does not match any available libraries.' );
 			}
 			// Turn the segments into a path string
-			$path = dirname( __FILE__ ).DIRECTORY_SEPARATOR.implode( DIRECTORY_SEPARATOR, $segments );
+			$path = implode( DIRECTORY_SEPARATOR, $segments );
 			// Fetch and return the library
 			return new self( $path );
 		}
@@ -182,6 +193,23 @@
 	  */
 
 		private $_path = null;
+
+	 /**
+	  * Get magic method.
+	  *
+	  * @param string $property The name of the property to return the value for.
+	  * @return mixed The value for the requested property. Defaults to null.
+	  */
+
+	  	public function __get( $property ) {
+		  	switch( $property ) {
+			  	case 'path' :
+			  		return $this->_path;
+			  	default:
+			  		return null;
+		  	}
+	  	}
+
 
 	 /**
 	  * Collection of functions files.
@@ -288,7 +316,9 @@
   */
 
   	function __autoload( $className ) {
-  		// Check the given parameters
+	  	// Get the base directory
+  		$basedir = defined('__BASEDIR__')?__BASEDIR__:dirname(__FILE__);
+ 		// Check the given parameters
 	  	if( ! is_string( $className ) ) {
 			throw new \InvalidArgumentException( 'Class name is expected to be a string.' );
 	  	}
@@ -301,30 +331,32 @@
 		if( count( $segments ) === 2 ) {
 			$segments[0] = strtolower( $segments[0] );
 			// Extension libraries
-			if( is_dir( dirname( __FILE__ ).'/library/'.$segments[0] ) ) {
+			if( is_dir( $basedir.'/library/'.$segments[0] ) ) {
 				array_unshift( $segments, 'library' );
 				$library_segments = array_slice( $segments, 0, 2 );
 				$class_segments = array_slice( $segments, 2 );
 			}
 			// Site libraries
-			else if( is_dir( dirname( __FILE__ ).'/sites/'.$segments[0] ) ) {
+			else if( is_dir( $basedir.'/sites/'.$segments[0] ) ) {
 				array_unshift( $segments, 'sites' );
 				$library_segments = array_slice( $segments, 0, 2 );
 				$class_segments = array_slice( $segments, 2 );
 			}
 			// Custom libraries
-			else if( is_dir( dirname( __FILE__ ).'/'.$segments[0] ) ) {
+			else if( is_dir( $basedir.'/'.$segments[0] ) ) {
 				$library_segments = array_slice( $segments, 0, 1 );
 				$class_segments = array_slice( $segments, 1 );
 			}
 			// Can't find the library
 			else {
-				throw new \Exception( 'Library `'.$segments[0].'` does not exist.' );
+				throw new \Exception( 'Library `'.$segments[0].'` is invalid.' );
 			}
+			// Add the base directory
+			array_unshift( $library_segments, $basedir );
 		}
 		// Framework libraries
 		else if( count( $segments ) === 3 && $segments[0] === 'Framework' ) {
-			$segments[0] = 'library';
+			$segments[0] = dirname(__FILE__);
 			$segments[1] = strtolower( $segments[1] );
 			$library_segments = array_slice( $segments, 0, 2 );
 			$class_segments = array_slice( $segments, 2 );
@@ -335,15 +367,23 @@
 			$segments[1] = strtolower( $segments[1] );
 			$library_segments = array_slice( $segments, 0, 2 );
 			$class_segments = array_slice( $segments, 2 );
+			array_unshift( $library_segments, $basedir );
+		}
+		// Custom libraries
+		else if( count( $segments ) >= 3 ) {
+			$library_segments = array_slice( $segments, 0, 1 );
+			$class_segments = array_slice( $segments, 1 );
+			array_unshift( $library_segments, $basedir );
 		}
 		// Classes go in the classes folder
 		array_unshift( $class_segments, 'classes' );
 		// Turn the paths into strings
-		$library_path = dirname( __FILE__ ).DIRECTORY_SEPARATOR.implode( DIRECTORY_SEPARATOR, $library_segments );
+		$library_path = implode( DIRECTORY_SEPARATOR, $library_segments );
 		$class_path = DIRECTORY_SEPARATOR.implode( DIRECTORY_SEPARATOR, $class_segments ).'.php';
 		// Can't find the library
 		if( ! file_exists( $library_path ) || ! is_dir( $library_path ) ) {
-			throw new \Exception( 'Library `'.$library[1].'` does not exist.' );
+			var_dump( $library_path );
+			throw new \Exception( 'Library does not exist for `'.$className.'`.' );
 		}
 		// Fetch the library
 		$library = Library::load( $library_path );

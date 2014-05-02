@@ -137,12 +137,14 @@
 	  */
 
 		public function root() {
+			$root = new Path( '' );
 			if( $this->_root !== null ) {
-				return new Path( DIRECTORY_SEPARATOR.$this->_root );
+				$root->_path = DIRECTORY_SEPARATOR.$this->_root;
 			}
-			else {
-				return new Path( DIRECTORY_SEPARATOR.document_root() );
+			else if( strpos( document_root(), $this->_path ) === 0 ) {
+				$root->_path = DIRECTORY_SEPARATOR.document_root();
 			}
+			return $root;
 	  	}
 
 	 /**
@@ -331,11 +333,11 @@
 			$relativeTo = $relativeTo->_path;
 			// Super simple: $relativeTo equals $path
 			if( $path === $relativeTo ) {
-				return '';
+				return $this;
 			}
 			// Simple: $relativeTo is in $path
 			if( strpos( $path, $relativeTo ) === 0 ) {
-				return substr( $path, strlen( $relativeTo ) );
+				return new Path( substr( $path, strlen( $relativeTo ) ) );
 			}
 			// More difficult: $relativeTo is outside of $path
 			$relative  = array();
@@ -353,7 +355,7 @@
 				}
 				$relative[] = $part;
 			}
-			return implode( DIRECTORY_SEPARATOR, $relative );
+			return new Path( implode( DIRECTORY_SEPARATOR, $relative ) );
 	  	}
 
 //

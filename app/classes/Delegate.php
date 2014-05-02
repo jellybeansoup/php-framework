@@ -127,6 +127,16 @@
 //
 
 	 /**
+	  * The name of the default controller class.
+	  *
+	  * Defaults to `MainController`, unless overridden by the application's delegate.
+	  *
+	  * @var string
+	  */
+
+		protected $_defaultController = 'MainController';
+
+	 /**
 	  * Run filtering on the provided URL. This allows you to route a given URL to something
 	  * different within the code, or to allow for varable segments in the URI.
 	  *
@@ -144,11 +154,11 @@
 		protected function filterURL( \Framework\Core\URL $url ) {
 			// Home page default
 			if( count( $url->path->components ) === 0 ) {
-				$url->path = path( '/maincontroller' );
+				$url->path = path( '/'.$this->_defaultController );
 			}
 			// Exception default
 			else if( $url->scheme === 'exception' ) {
-				$url->path = path( '/maincontroller/exception' );
+				$url->path = path( '/'.$this->_defaultController.'/exception' );
 			}
 			// Return the URL
 			return $url;
@@ -189,28 +199,39 @@
 			if( ( $first = $filteredPath->componentAtIndex( 0 ) ) === null ) {
 				throw new HTTPNotFoundException;
 			}
-			// Find a metching controller
-			$controller = null;
-			foreach( $this->controllers() as $name => $path ) {
-				if( strtolower( $name ) === strtolower( $first ) ) {
-					// Load the file while we're here
-					require_once( $path );
-					// Get the controller class name
-					$className = self::classNamespace().'\\'.$name;
-					// Load the controller instance if we can
-					if( is_subclass_of( $className, 'Framework\\App\\Controller' ) ) {
-						$controller = $className::instance();
+			// Get the controllers
+			$controllers = $this->controllers();
+			// Loop through the components
+			$className = null;
+			$index = 0;
+			foreach( $filteredPath->components() as $component ) {
+				// Build a class name
+				$className = $className !== null ? $className.'\\'.$component : $component;
+				// Find a metching controller
+				$controller = null;
+				foreach( $controllers as $name => $path ) {
+					if( strtolower( $name ) === strtolower( $className ) ) {
+						// Load the file while we're here
+						require_once( $path );
+						// Get the controller class name
+						$className = self::classNamespace().'\\'.$name;
+						// Load the controller instance if we can
+						if( is_subclass_of( $className, 'Framework\\App\\Controller' ) ) {
+							$controller = $className::instance();
+						}
+						// Get out of the loop
+						break;
+						break;
 					}
-					// Get out of the loop
-					break;
 				}
+				$index++;
 			}
 			// If we have no controller, throw an exception
 			if( $controller === null ) {
 				throw new HTTPNotFoundException;
 			}
 			// Find the method for the second URI component
-			if( ( $second = $filteredPath->componentAtIndex( 1 ) ) === null ) {
+			if( ( $second = $filteredPath->componentAtIndex( $index ) ) === null ) {
 				$second = 'index'; // Default to index
 			}
 			// If we can't route the method, throw an exception
@@ -282,7 +303,30 @@
 	  */
 
 		private final function controllers() {
-			return $this->library()->glob( '/controllers/*.php' );
+			// Collections
+			$folders = array( '/controllers' );
+			$controllers = array();
+			// Go through the folders we have to find all the files
+			$library = $this->library();
+			$library_path = path( $library->path );
+			for( $i=0; $i<count($folders); $i++ ) {
+				$pattern = $folders[$i].'/*';
+				// Get all the children of the folder
+				$children = $library->glob( $pattern );
+				foreach( $children as $child ) {
+					$child_path = path( $child );
+					$relative_path = $child_path->relativeTo( $library_path );
+					if( $child_path->isFolder() ) {
+						$folders[] = $relative_path;
+					}
+					else if( $child_path->isFile() && $child_path->extension() === 'php' ) {
+						$key = str_replace( '/', '\\', $relative_path->pathByDeletingComponent( 1 )->pathByDeletingExtension() );
+						$controllers[$key] = $child;
+					}
+				}
+			}
+			// Return the controllers
+			return $controllers;
 		}
 
 //
