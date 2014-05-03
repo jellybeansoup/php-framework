@@ -204,42 +204,46 @@
 			// Loop through the components
 			$className = null;
 			$index = 0;
-			foreach( $filteredPath->components() as $component ) {
+			foreach( $filteredPath->components as $component ) {
 				// Build a class name
 				$className = $className !== null ? $className.'\\'.$component : $component;
 				// Find a metching controller
 				$controller = null;
 				foreach( $controllers as $name => $path ) {
-					if( strtolower( $name ) === strtolower( $className ) ) {
-						// Load the file while we're here
-						require_once( $path );
-						// Get the controller class name
-						$className = self::classNamespace().'\\'.$name;
-						// Load the controller instance if we can
-						if( is_subclass_of( $className, 'Framework\\App\\Controller' ) ) {
-							$controller = $className::instance();
-						}
-						// Get out of the loop
-						break;
-						break;
+					// If this round doesn't give us the right class, move on.
+					if( strtolower( $name ) !== strtolower( $className ) ) {
+						continue;
+					}
+					// Load the file while we're here
+					require_once( $path );
+					// Get the controller class name
+					$className = self::classNamespace().'\\'.$name;
+					// Load the controller instance if we can
+					if( is_subclass_of( $className, 'Framework\\App\\Controller' ) ) {
+						$controller = $className::instance();
 					}
 				}
+				// Iterate the index
 				$index++;
+				// If we have our controller instance
+				if( $controller !== null ) {
+					break;
+				}
 			}
 			// If we have no controller, throw an exception
 			if( $controller === null ) {
 				throw new HTTPNotFoundException;
 			}
 			// Find the method for the second URI component
-			if( ( $second = $filteredPath->componentAtIndex( $index ) ) === null ) {
-				$second = 'index'; // Default to index
+			if( ( $method = $filteredPath->componentAtIndex( $index ) ) === null ) {
+				$method = 'index'; // Default to index
 			}
 			// If we can't route the method, throw an exception
-			if( ! $controller->canRoute( $second ) ) {
+			if( ! $controller->canRoute( $method ) ) {
 				throw new HTTPNotFoundException;
 			}
 			// Otherwise we're done here. BOOM.
-			return $controller->route( $second, $attachments );
+			return $controller->route( $method, $attachments );
 		}
 
 	 /**
