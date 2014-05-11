@@ -25,7 +25,6 @@
   * @license FreeBSD
   */
 
-
 	abstract class Object {
 
 //
@@ -204,7 +203,7 @@
 		protected function identifier() {
 			// Set the identifier
 			if( ! $this->_identifier ) {
-				$this->_identifier = md5( sprintf( '%s::%s::%s::%s', $_SERVER['HTTP_HOST'], self::className(), time(), microtime() ) );
+				$this->_identifier = md5( sprintf( '%s::%s::%s::%s', $_SERVER['HTTP_HOST'], $this->className(), time(), microtime() ) );
 			}
 			// Return the class
 			return $this->_identifier;
@@ -266,7 +265,7 @@
 	  */
 
 		protected final static function classNamespace() {
-			$class = trim( self::className(), "\\ \t\n\r\0\x0B" );
+			$class = trim( $this->className(), "\\ \t\n\r\0\x0B" );
 			// Find the namespace
 	  		if( $pos = strrpos( $class, '\\' ) ) {
 	  			return substr( $class, 0, $pos );
@@ -344,7 +343,7 @@
 
 		public function hasProperty( $property ) {
 			// Fetch the a reflection class
-			$reflect = new \ReflectionObject( $this );
+			$reflect = $this->_reflection();
 			// If the property is public
 			return $reflect->hasProperty( $property );
 		}
@@ -357,12 +356,12 @@
 	  */
 
 		public function propertyIsMutable( $property ) {
+			// Fetch the a reflection class
+			$reflect = $this->_reflection();
 			// If the property doesn't exist
-			if( ! $this->hasProperty( $property ) ) {
+			if( ! $reflect->hasProperty( $property ) ) {
 				return false;
 			}
-			// Fetch the a reflection class
-			$reflect = new \ReflectionObject( $this );
 			// If the property is public
 			return $reflect->getProperty( $property )->isPublic();
 		}
@@ -375,12 +374,12 @@
 	  */
 
 		public function propertyIsPublic( $property ) {
+			// Fetch the a reflection class
+			$reflect = $this->_reflection();
 			// If the property doesn't exist
-			if( ! $this->hasProperty( $property ) ) {
+			if( ! $reflect->hasProperty( $property ) ) {
 				return false;
 			}
-			// Fetch the a reflection class
-			$reflect = new \ReflectionObject( $this );
 			// If the property is public
 			return $reflect->getProperty( $property )->isPublic();
 		}
@@ -423,8 +422,7 @@
 	  */
 
 		public final function hasMethod( $method ) {
-			$reflect = new \ReflectionObject( $this );
-			return $reflect->hasMethod( $method );
+			return ( $this->_reflectionForMethod( $method ) !== null );
 		}
 
 	 /**
@@ -434,16 +432,36 @@
 	  */
 
 		public final function hasPublicMethod( $method ) {
-			// Fetch the a reflection class
-			$reflect = new \ReflectionObject( $this );
+			// Fetch the method reflection
+			$reflect = $this->_reflectionForMethod( $method );
 			// If the property is public
-			if( ! $reflect->hasMethod( $method ) ) {
+			if( $reflect === null ) {
 				return false;
 			}
-			// Fetch the method
-			$method = $reflect->getMethod( $method );
 			// If the method is public
-			return $method->isPublic();
+			return $reflect->isPublic();
+		}
+
+	 /**
+	  * Call the method with the given name if it exists.
+	  *
+	  * @return mixed The results of the method call.
+	  */
+
+		public final function callMethod( $method, $args=array() ) {
+			// Fetch the method reflection
+			$reflect = $this->_reflectionForMethod( $method );
+			// If the method doesn't exist, or is not public
+			if( $reflect === null || ! $reflect->isPublic() ) {
+				return null;
+			}
+			// Call the method
+			try {
+				return $reflect->invokeArgs( $this, $args );
+			}
+			catch( \ReflectionException $e ) {
+				return null;
+			}
 		}
 
 	 /**
@@ -454,6 +472,40 @@
 
 		public final function isEqual( Object $object ) {
 			return ( $this->hash() === $object->hash() );
+		}
+
+//
+// Reflection
+//
+
+	 /**
+	  * Determine if the object is equal to the provided object.
+	  *
+	  * @return bool Flag indicating if the objects are equal.
+	  */
+
+		protected final function _reflection() {
+			try {
+				return new \ReflectionObject( $this );
+			}
+			catch( \ReflectionException $e ) {
+				return null;
+			}
+		}
+
+	 /**
+	  * Determine if the object is equal to the provided object.
+	  *
+	  * @return bool Flag indicating if the objects are equal.
+	  */
+
+		protected final function _reflectionForMethod( $method ) {
+			try {
+				return new \ReflectionMethod( $this, $method );
+			}
+			catch( \ReflectionException $e ) {
+				return null;
+			}
 		}
 
 //
@@ -514,7 +566,7 @@
 	  */
 
 	    public static function __set_state( $array ) {
-			$class = self::className();
+			$class = $this->className();
 			$instance = new $class;
 			foreach( $array as $key => $value ) {
 				$instance->setValueOfProperty( $key, $value );

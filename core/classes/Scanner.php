@@ -77,7 +77,7 @@
 
 	  	private function nextCharacter() {
 	  		// If we're at the end of the string
-	  		if( self::isAtEnd() )
+	  		if( $this->isAtEnd() )
 	  			return false;
 	  		// Get the character at the current location
 	  		$character = substr($this->string,$this->scanLocation,1);
@@ -93,7 +93,7 @@
 	  */
 
 	  	private function character() {
-		  	return self::substringWithLength( 1 );
+		  	return $this->substringWithLength( 1 );
 	  	}
 
 	 /**
@@ -118,7 +118,7 @@
 			if( ! $characters && strlen( $characters ) === 0 )
 				return;
 			// Skip until we match a character that doesn't match
-			while( $character = self::character() ) {
+			while( $character = $this->character() ) {
 				// If the character is in our list of skippable characters
 				if( strpos( $characters, $character ) === false )
 					break;
@@ -156,10 +156,10 @@
 		  	if( ! is_string( $characters ) )
 				throw new \InvalidArgumentException;
 			// Skip the preset characters
-			self::skipCharacters( $this->charactersToBeSkipped );
+			$this->skipCharacters( $this->charactersToBeSkipped );
 			// Capture the provided characters
 			$capturedString = null;
-			while( $character = self::nextCharacter() ) {
+			while( $character = $this->nextCharacter() ) {
 				if( strpos( $characters, $character ) === false )
 					break;
 				$capturedString .= $character;
@@ -167,7 +167,7 @@
 			// Pass the captured string back
 			$stringValue = $capturedString;
 	  		// Iterate the scanLocation
-	  		if( ! self::isAtEnd() && strlen( $capturedString ) > 0 )
+	  		if( ! $this->isAtEnd() && strlen( $capturedString ) > 0 )
 	  			$this->scanLocation++;
 			// And let them know if we captured any characters
 			return (bool) strlen( $capturedString );
@@ -182,10 +182,10 @@
 		  	if( ! is_string( $stopCharacters ) )
 				throw new \InvalidArgumentException;
 			// Skip the preset characters
-			self::skipCharacters( $this->charactersToBeSkipped );
+			$this->skipCharacters( $this->charactersToBeSkipped );
 			// Capture the provided characters
 			$capturedString = null;
-			while( $character = self::nextCharacter() ) {
+			while( $character = $this->nextCharacter() ) {
 				if( strpos( $stopCharacters, $character ) !== false )
 					break;
 				$capturedString .= $character;
@@ -193,7 +193,7 @@
 			// Pass the captured string back
 			$stringValue = $capturedString;
 	  		// Iterate the scanLocation
-	  		if( ! self::isAtEnd() && strlen( $capturedString ) > 0 )
+	  		if( ! $this->isAtEnd() && strlen( $capturedString ) > 0 )
 	  			$this->scanLocation++;
 			// And let them know if we captured any characters
 			return (bool) strlen( $capturedString );
@@ -208,16 +208,16 @@
 		  	if( ! is_string( $string ) )
 				throw new \InvalidArgumentException;
 			// Skip the preset characters
-			self::skipCharacters( $this->charactersToBeSkipped );
+			$this->skipCharacters( $this->charactersToBeSkipped );
 			// Capture the provided characters
-			$capturedString = self::substringWithLength( strlen( $string ) );
+			$capturedString = $this->substringWithLength( strlen( $string ) );
 			// The strings don't match
-			if( ! self::stringsMatch( $capturedString, $string ) )
+			if( ! $this->stringsMatch( $capturedString, $string ) )
 				return false;
 			// Pass the captured string back
 			$stringValue = $capturedString;
 	  		// Iterate the scanLocation
-	  		if( ! self::isAtEnd() && strlen( $capturedString ) > 0 )
+	  		if( ! $this->isAtEnd() && strlen( $capturedString ) > 0 )
 	  			$this->scanLocation = $this->scanLocation + ( strlen( $string ) - 1 );
 			// And let them know if we captured any characters
 			return (bool) strlen( $capturedString );
@@ -235,18 +235,18 @@
 			$length = strlen( $stopString );
 			$firstCharacter = substr( $stopString, 0, 1 );
 			// Skip the preset characters
-			self::skipCharacters( $this->charactersToBeSkipped );
+			$this->skipCharacters( $this->charactersToBeSkipped );
 			// Capture the provided characters
 			$capturedString = null;
-			while( $character = self::nextCharacter() ) {
-				if( self::stringsMatch( $character, $firstCharacter ) && self::stringsMatch( self::substringWithLength( $length ), $stopString ) )
+			while( $character = $this->nextCharacter() ) {
+				if( $this->stringsMatch( $character, $firstCharacter ) && $this->stringsMatch( $this->substringWithLength( $length ), $stopString ) )
 					break;
 				$capturedString .= $character;
 			}
 			// Pass the captured string back
 			$stringValue = $capturedString;
 	  		// Iterate the scanLocation
-	  		if( ! self::isAtEnd() && strlen( $capturedString ) > 0 )
+	  		if( ! $this->isAtEnd() && strlen( $capturedString ) > 0 )
 	  			$this->scanLocation++;
 			// And let them know if we captured any characters
 			return (bool) strlen( $capturedString );

@@ -93,16 +93,6 @@
 			return $this->_path;
 	  	}
 
-	 /**
-	  * Debug Value
-	  *
-	  * @return
-	  */
-
-		public function __toDebug() {
-			return self::__toString();
-	  	}
-
 //
 // Accessing the Parts of the URL
 //
@@ -127,7 +117,7 @@
 	  */
 
 		public function absolutePath() {
-			return self::root()->pathByAddingComponent( $this->_path );
+			return $this->root()->pathByAddingComponent( $this->_path );
 	  	}
 
 	 /**
@@ -175,7 +165,7 @@
 
 		public function pathByDeletingComponent( $number ) {
 			// Fetch the components
-			$components = self::components();
+			$components = $this->components();
 			// If there's no component for that number, let's not bother
 			if( ! isset( $components[$number-1] ) ) {
 				return $this;
@@ -225,7 +215,7 @@
 	  */
 
 		public function components() {
-			$trimmed = self::trimmed();
+			$trimmed = $this->trimmed();
 			// We split by the '/'
 			if( strpos( $trimmed, '/' ) !== false ) {
 				return explode( '/', $trimmed );
@@ -368,7 +358,7 @@
 	  */
 
 		public function exists() {
-			return file_exists( self::absolutePath() );
+			return file_exists( $this->absolutePath() );
 	  	}
 
 	 /**
@@ -377,7 +367,7 @@
 	  */
 
 		public function isFile() {
-			return is_file( self::absolutePath() );
+			return is_file( $this->absolutePath() );
 	  	}
 
 	 /**
@@ -386,7 +376,7 @@
 	  */
 
 		public function isFolder() {
-			return is_dir( self::absolutePath() );
+			return is_dir( $this->absolutePath() );
 	  	}
 
 	 /**
@@ -395,7 +385,7 @@
 	  */
 
 		public function contents() {
-			if( is_file( $absolutePath = self::absolutePath() ) ) {
+			if( is_file( $absolutePath = $this->absolutePath() ) ) {
 				return file_get_contents( $absolutePath );
 			}
 			return null;
@@ -407,7 +397,7 @@
 	  */
 
 		public function setContents( $value ) {
-			if( is_file( $absolutePath = self::absolutePath() ) ) {
+			if( is_file( $absolutePath = $this->absolutePath() ) ) {
 				return file_put_contents( $absolutePath, $value );
 			}
 			return false;
@@ -419,7 +409,7 @@
 	  */
 
 		public function inc( $once=true ) {
-			if( is_file( $absolutePath = self::absolutePath() ) ) {
+			if( is_file( $absolutePath = $this->absolutePath() ) ) {
 				return ( $once === true ) ? include_once $absolutePath : include $absolutePath;
 			}
 			return null;
@@ -431,7 +421,7 @@
 	  */
 
 		public function req( $once=true ) {
-			if( is_file( $absolutePath = self::absolutePath() ) ) {
+			if( is_file( $absolutePath = $this->absolutePath() ) ) {
 				return ( $once === true ) ? require_once $absolutePath : require $absolutePath;
 			}
 			return null;

@@ -199,15 +199,7 @@
 	  */
 
 		public function asString() {
-			return self::absoluteString();
-	  	}
-
-	 /**
-	  * Debug Value
-	  */
-
-		public function __toDebug() {
-			return self::__toString();
+			return $this->absoluteString();
 	  	}
 
 //
@@ -258,10 +250,10 @@
 				$fragment = '#'.$this->fragment;
 			}
 			// Path should either exist or not
-			if( ( $path = self::fullPath() ) == '/' )
+			if( ( $path = $this->fullPath() ) == '/' )
 				$path = '';
 			// Build a string
-			return self::serverString().$path.$query.$fragment;
+			return $this->serverString().$path.$query.$fragment;
 	  	}
 
 	 /**
@@ -269,7 +261,7 @@
 	  */
 
 		public function baseString() {
-			return self::serverString().$this->rootPath;
+			return $this->serverString().$this->rootPath;
 	  	}
 
 	 /**
@@ -321,16 +313,16 @@
 			$current = new Url();
 			// If the two are Equal
 			if( $this->isEqual( $current ) ) {
-				return sprintf( './%@', self::lastPathComponent().$this->query.$this->fragment );
+				return sprintf( './%@', $this->lastPathComponent().$this->query.$this->fragment );
 			}
 			// Scheme, authentication, host or port isn't the same
-			if( self::serverString() !== $current->serverString ) {
-				return self::absoluteString();
+			if( $this->serverString() !== $current->serverString ) {
+				return $this->absoluteString();
 			}
 			// Array to collect relative components
 			$relativeComponents = array();
 			// Path isn't the same
-			if( ( $fullPath = self::fullPath() ) !== $current->fullPath ) {
+			if( ( $fullPath = $this->fullPath() ) !== $current->fullPath ) {
 				$relativeComponents[] = $fullPath->relativeTo( $current->fullPath );
 			}
 			// Query isn't the same
@@ -350,7 +342,7 @@
 	  */
 
 		public function resourceSpecifier() {
-			return preg_replace('/^[\w]+:/i',null,self::absoluteString());
+			return preg_replace('/^[\w]+:/i',null,$this->absoluteString());
 	  	}
 
 	 /**

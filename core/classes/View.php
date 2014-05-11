@@ -165,7 +165,7 @@
 	  */
 
 	  	public function asString() {
-	  		return self::render();
+	  		return $this->render();
 	  	}
 
 	 /**

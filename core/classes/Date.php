@@ -50,14 +50,6 @@
 		}
 
 	 /**
-	  * Debug Value
-	  */
-
-		public function __toDebug() {
-			return self::__toString();
-	  	}
-
-	 /**
 	  * Fetch the timestamp representing the date object.
 	  * @return int Fetch the timestamp representing the date object.
 	  */
