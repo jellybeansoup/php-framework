@@ -96,7 +96,7 @@
 				return $propertyName;
 			}
 			// Fetch the current class
-			$class = $this->className();
+			$class = self::className();
 			// If the property is dynamic, call the listed method.
 			if( array_key_exists( $propertyName, $class::$_dynamicProperties ) ) {
 				$propertyDetails = $class::$_dynamicProperties[$propertyName];
@@ -162,7 +162,7 @@
 				return $methodName;
 			}
 			// Fetch the current class
-			$class = $this->className();
+			$class = self::className();
 			// If the property is dynamic, call the listed method.
 			if( array_key_exists( $propertyName, $class::$_dynamicProperties ) ) {
 				$propertyDetails = $class::$_dynamicProperties[$propertyName];
@@ -203,7 +203,7 @@
 		protected function identifier() {
 			// Set the identifier
 			if( ! $this->_identifier ) {
-				$this->_identifier = md5( sprintf( '%s::%s::%s::%s', $_SERVER['HTTP_HOST'], $this->className(), time(), microtime() ) );
+				$this->_identifier = md5( sprintf( '%s::%s::%s::%s', $_SERVER['HTTP_HOST'], self::className(), time(), microtime() ) );
 			}
 			// Return the class
 			return $this->_identifier;
@@ -265,7 +265,7 @@
 	  */
 
 		protected final static function classNamespace() {
-			$class = trim( $this->className(), "\\ \t\n\r\0\x0B" );
+			$class = trim( self::className(), "\\ \t\n\r\0\x0B" );
 			// Find the namespace
 	  		if( $pos = strrpos( $class, '\\' ) ) {
 	  			return substr( $class, 0, $pos );
@@ -305,7 +305,7 @@
 		public function __dynamicProperties() {
 			$properties = array();
 			// Fetch the dynamic properties
-			$class = $this->className();
+			$class = self::className();
 			foreach( $class::$_dynamicProperties as $key ) {
 				$properties[$key] = $this->__get($key);
 			}
@@ -323,7 +323,7 @@
 			// Create an array for the output
 			$methods = array();
 			// Fetch the a reflection class
-			$reflect = new \ReflectionClass( $this->className() );
+			$reflect = new \ReflectionClass( self::className() );
 			// Iterate through the $methods and filter out private ones
 			foreach( $reflect->getMethods() as $method ) {
 				if( $method->isPublic() ) {
@@ -566,7 +566,7 @@
 	  */
 
 	    public static function __set_state( $array ) {
-			$class = $this->className();
+			$class = self::className();
 			$instance = new $class;
 			foreach( $array as $key => $value ) {
 				$instance->setValueOfProperty( $key, $value );
