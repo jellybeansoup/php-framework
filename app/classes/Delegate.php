@@ -193,7 +193,7 @@
 
 		protected function responseForURL( \Framework\Core\URL $url, $attachments=array() ) {
 			// Add the URL as an attachment
-			array_unshift( $attachments, $url );
+			array_unshift( $attachments, clone $url );
 			// Filter the URL
 			$filteredURL = $this->filterURL( $url );
 			$filteredPath = $filteredURL->path->pathByDeletingExtension;
