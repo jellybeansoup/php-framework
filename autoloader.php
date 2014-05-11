@@ -263,7 +263,7 @@
 				return $this->_classes;
 			}
 			// Find all the directories in the library folder
-			$this->_classes = $this->glob( '/classes/*.php' );
+			$this->_classes = $this->glob( '/classes/*.php', true );
 			foreach( $this->_classes as $name => $path ) {
 				$this->_classes[$name] = str_replace( $this->_path, '', $path );
 			}
@@ -275,17 +275,38 @@
 	  * Returns a collection of class matching the given `$relativePath` in the library folder.
 	  *
 	  * @param string $relativePath The path/pattern you want to match.
+	  * @param bool $recursive Flag indicating whether to glob subdirectories (true) or not (false). Defaults to false.
 	  * @return array A collection of avaliable files.
 	  */
 
-		public function glob( $relativePath ) {
-			// Find all the files
-			$glob_paths = glob( $this->_path.$relativePath );
+		public function glob( $relativePath, $recursive=false ) {
+			// Split the relative path
+			$path = $this->_path;
+			$pattern = $relativePath;
+			if( ( $pos = strrpos( $pattern, '/' ) ) !== false ) {
+				$path = $this->_path.substr( $pattern, 0, $pos );
+				$pattern = substr( $pattern, $pos+1 );
+			}
+			// We're probably going to collect some folders
+			$folders = array( $path );
+			// If we're searching recursively, find folders!
+			if( $recursive ) {
+				$folder_path = $path;
+				while( $found_folders = glob( $folder_path.'/*', GLOB_ONLYDIR ) ) {
+					$folder_path .= '/*';
+					$folders = array_merge( $folders, $found_folders );
+				}
+			}
+			// Go through and find our files
 			$files = array();
-			foreach( $glob_paths as $path ) {
-				$name = pathinfo( $path, PATHINFO_FILENAME );
-				if( substr( $name, 0, 1 ) !== '_' ) {
-					$files[$name] = $path;
+			foreach( $folders as $folder ) {
+				// Find all the files
+				foreach( glob( $folder.'/'.$pattern ) as $file ) {
+					$relative = str_replace( $path.'/', '', $file );
+					$name = pathinfo( str_replace( '/', '\\', $relative ), PATHINFO_FILENAME );
+					if( substr( pathinfo( $file, PATHINFO_FILENAME ), 0, 1 ) !== '_' ) {
+						$files[$name] = $file;
+					}
 				}
 			}
 			// Return the array
@@ -371,6 +392,7 @@
 		}
 		// Custom libraries
 		else if( count( $segments ) >= 3 ) {
+			$segments[0] = strtolower( $segments[0] );
 			$library_segments = array_slice( $segments, 0, 1 );
 			$class_segments = array_slice( $segments, 1 );
 			array_unshift( $library_segments, $basedir );
