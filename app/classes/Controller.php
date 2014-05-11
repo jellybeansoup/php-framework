@@ -11,8 +11,6 @@
   * Provides an interface for routing incoming method requests and generating the
   * response content.
   *
-  * @property int $status The HTTP status code for this response. Defaults to 200 (OK).
-  *
   * @package Framework\App
   * @author Daniel Farrelly <daniel@jellystyle.com>
   * @copyright 2014 Daniel Farrelly <daniel@jellystyle.com>
@@ -71,7 +69,6 @@
 		  	// Return the instance
 		  	return self::$_instances[$class];
 	  	}
-
 
 //
 // Handling the response
@@ -149,6 +146,19 @@
 //
 
 	 /**
+	  * Allowed method prefixes.
+	  *
+	  * Defaults to the current request method (usually `GET`, `POST`, `PUT` or `DELETE`) and `action`.
+	  *
+	  * @internal
+	  * @var string
+	  */
+
+	  	protected function _methodPrefixes() {
+	  		return array( $_SERVER['REQUEST_METHOD'], 'action' );
+	  	}
+
+	 /**
 	  * Route a given method name, with provided attachments.
 	  *
 	  * The given method name is prefixed with either the request method or 'action' before calling. The
@@ -160,6 +170,7 @@
 	  * respectively.
 	  *
 	  * @param string $methodName The method name you want to call.
+	  * @param \Framework\Core\URL $url The URL that's being routed.
 	  * @param array $attachments A collection of attachments you want to send to the method as arguments.
 	  * @return Framework\App\Response|null The response object generated with the method's return value
 	  *   as the body, or null if the routing fails.
@@ -169,15 +180,16 @@
 		  	// Grab a copy of the response object
 		  	$response = $this->response();
 	  		// Gather our prefixes
-		  	$prefixes = array( $_SERVER['REQUEST_METHOD'], 'action' );
-		  	foreach( $prefixes as $prefix ) {
+		  	foreach( $this->_methodPrefixes() as $prefix ) {
 		  		// Prefix the given name
 			  	$prefixedMethodName = strtolower( $prefix ).ucfirst( $methodName );
 			  	// If a matching public method exists, make the call.
 			  	if( $this->hasPublicMethod( $prefixedMethodName ) ) {
-	  				// The response body is the return value of the called method
-	  				$response->body = call_user_func_array( array( $this, $prefixedMethodName ), $attachments );
-	  				// Clear the stored response object
+	  				// The response body is the return value of the called method.
+	  				$body = $this->callMethod( $prefixedMethodName, $attachments );
+	  				// We run it through a body for additional formatting.
+	  				$response->body = $this->formatBody( $body, $attachments );
+	  				// Clear the stored response object.
 	  				unset( $this->_response );
 	  				// Return the response object.
 	  				return $response;
@@ -185,6 +197,21 @@
 		  	}
   			// We failed
   			return null;
+	  	}
+
+	 /**
+	  * Hook for pre-formatting the response body.
+	  *
+	  * This allows subclasses of `Framework\App\Controller` to handle the response format without having
+	  * to override the entire routing mechanism.
+	  *
+	  * @param mixed $body The body to be formatted.
+	  * @param array $attachments A collection of attachments you want to send to the method as arguments.
+	  * @return string The formatted response body.
+	  */
+
+	  	public function formatBody( $body, $attachments ) {
+	  		return strval( $body );
 	  	}
 
 	 /**
@@ -204,8 +231,7 @@
 
 	  	public function canRoute( $methodName ) {
 	  		// Gather our prefixes
-		  	$prefixes = array( $_SERVER['REQUEST_METHOD'], 'action' );
-		  	foreach( $prefixes as $prefix ) {
+		  	foreach( $this->_methodPrefixes() as $prefix ) {
 		  		// Prefix the given name
 			  	$prefixedMethodName = strtolower( $prefix ).ucfirst( $methodName );
 			  	// If a matching public method exists, return true.

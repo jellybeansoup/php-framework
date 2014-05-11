@@ -192,9 +192,11 @@
 	  */
 
 		protected function responseForURL( \Framework\Core\URL $url, $attachments=array() ) {
+			// Add the URL as an attachment
+			array_unshift( $attachments, $url );
 			// Filter the URL
 			$filteredURL = $this->filterURL( $url );
-			$filteredPath = $filteredURL->path;
+			$filteredPath = $filteredURL->path->pathByDeletingExtension;
 			// Find the controller for the first URI component
 			if( ( $first = $filteredPath->componentAtIndex( 0 ) ) === null ) {
 				throw new HTTPNotFoundException;
@@ -246,9 +248,9 @@
 			return $controller->route( $method, $attachments );
 		}
 
-	 /**
-	  * Generate a response based on a given exception using a controller.
+	 /**	  * Generate a response based on a given exception using a controller.
 	  *
+
 	  * A URL is generated based on the given exception, with the pattern exception:/{code},
 	  * which the controller attempts to use to generate a response using `responseForURL`,
 	  * passing the exception itself as an attachment.
