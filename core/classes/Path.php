@@ -71,7 +71,7 @@
 				$backtrace = debug_backtrace();
 				foreach( $backtrace as $call ) {
 					if( isset( $call['file'] ) && $call['file'] !== __FILE__ ) {
-						$this->_root = pathinfo( $call['file'], PATHINFO_DIRNAME );
+						$this->_root = dirname( $call['file'] );
 						break;
 					}
 				}

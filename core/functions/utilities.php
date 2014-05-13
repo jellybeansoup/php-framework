@@ -55,5 +55,15 @@
   */
 
 	function path( $path=null ) {
+		// Capture the file the path was created in if the path is relative
+		if( ! ( $startsWithSlash = preg_match( '/^\s*\//i', $path ) ) ) {
+			$backtrace = debug_backtrace();
+			foreach( $backtrace as $call ) {
+				if( isset( $call['file'] ) && $call['file'] !== __FILE__ ) {
+					$path = dirname( $call['file'] ).DIRECTORY_SEPARATOR.$path;
+					break;
+				}
+			}
+		}
 		return \Framework\Core\Path::create( $path );
 	}
