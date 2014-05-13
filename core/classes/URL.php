@@ -420,6 +420,10 @@
 	  */
 
 		public function setRootPath( $rootPath ) {
+			// If we're given false, convert to null
+			if( $rootPath === false ) {
+				$rootPath = null;
+			}
 			// If we're given a Path object or null
 			if( $rootPath instanceof Path || $rootPath === null ) {
 				$this->_rootPath = $rootPath;
