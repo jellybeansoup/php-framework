@@ -380,13 +380,31 @@
 	  	}
 
 	 /**
+	  * Fetch the content of the file at the current path.
 	  *
-	  * @return string
+	  * @param array $parameters An associative array of parameters to pass to the content as variables.
+	  * 	You can also pass boolean `false` to get the files source, which will get the pure contents
+	  *		of the file.
+	  * @return string The contents of the file.
 	  */
 
-		public function contents() {
+		public function contents( $parameters=null ) {
 			if( is_file( $absolutePath = $this->absolutePath() ) ) {
-				return file_get_contents( $absolutePath );
+				// Get the pur contents of the file
+				if( $parameters === false ) {
+					return file_get_contents( $absolutePath );
+				}
+		  		// Extract the data variables
+		  		if( is_array( $parameters ) ) {
+			  		extract( $parameters, EXTR_OVERWRITE );
+		  		}
+		  		// Require the file and buffer the output
+		  		ob_start();
+		  		require $absolutePath;
+				$bufferContents = ob_get_contents();
+		  		ob_end_clean();
+		  		// Return the content
+		  		return $bufferContents;
 			}
 			return null;
 	  	}
