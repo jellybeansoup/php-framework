@@ -183,7 +183,7 @@
 				if( ( $pos = strpos( $pathinfo, '?' ) ) !== false ) {
 					$pathinfo = substr( $pathinfo, 0, $pos );
 				}
-				if( strpos( $pathinfo, strval( $this->rootPath->trimmed ) ) === 1 ) {
+				if( strlen( $this->rootPath->trimmed ) > 0 && strpos( $pathinfo, strval( $this->rootPath->trimmed ) ) === 1 ) {
 					$pathinfo = substr( $pathinfo, strlen( $this->rootPath ) );
 				}
 				$this->path = new Path( $pathinfo );
