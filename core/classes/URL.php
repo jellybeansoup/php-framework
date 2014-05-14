@@ -178,6 +178,13 @@
 			elseif( $this->host == $_SERVER['HTTP_HOST'] && isset( $_SERVER['PATH_INFO'] ) ) {
 				$this->path = new Path( $_SERVER['PATH_INFO'] );
 			}
+			elseif( $this->host == $_SERVER['HTTP_HOST'] && isset( $_SERVER['REQUEST_URI'] ) ) {
+				$pathinfo = $_SERVER['REQUEST_URI'];
+				if( ( $pos = strpos( $_SERVER['REQUEST_URI'], '?' ) ) !== false ) {
+					$pathinfo = substr( $pathinfo, 0, $pos );
+				}
+				$this->path = new Path( $pathinfo );
+			}
 			elseif( $this->path === '/' ) {
 				$this->path = null;
 			}
