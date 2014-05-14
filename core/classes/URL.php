@@ -180,8 +180,11 @@
 			}
 			elseif( $this->host == $_SERVER['HTTP_HOST'] && isset( $_SERVER['REQUEST_URI'] ) ) {
 				$pathinfo = $_SERVER['REQUEST_URI'];
-				if( ( $pos = strpos( $_SERVER['REQUEST_URI'], '?' ) ) !== false ) {
+				if( ( $pos = strpos( $pathinfo, '?' ) ) !== false ) {
 					$pathinfo = substr( $pathinfo, 0, $pos );
+				}
+				if( strpos( $pathinfo, strval( $this->rootPath ) ) === 0 ) {
+					$pathinfo = substr( $pathinfo, strlen( $this->rootPath ) );
 				}
 				$this->path = new Path( $pathinfo );
 			}
