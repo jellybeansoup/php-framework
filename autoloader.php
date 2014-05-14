@@ -13,8 +13,9 @@
 
 	// Determine the base directory
 	if( ! defined('__BASEDIR__') ) {
-		$backtrace = end( debug_backtrace() );
-		define('__BASEDIR__',dirname($backtrace['file']));
+		$backtrace = debug_backtrace();
+		$call = end( $backtrace );
+		define('__BASEDIR__',dirname($call['file']));
 	}
 
  /**
