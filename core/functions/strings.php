@@ -66,9 +66,9 @@
 		// Seperate camelcase
 		$string = preg_replace( '/([A-Z0-9]+)/', ' $0', $string );
 		// Convert non-alphanumeric characters
-		$string = preg_replace( '/([^\w\d]+)/', ' ', $string );
-		// Trim the word
-		$string = trim( $word );
+		$string = preg_replace( '/([^A-Z0-9]+)/', ' ', $string );
+		// Trim the string
+		$string = trim( $string );
 		// Convert the spaces to the given character
 		$string = preg_replace( '/(\s+)/', $character, $string );
 		// Convert the case

@@ -157,7 +157,7 @@
 				$url->path = path( '/'.$this->_defaultController );
 			}
 			// Exception default
-			else if( $url->scheme === 'exception' ) {
+			else if( $url->scheme === 'exception' && count( $url->path->components ) === 1 ) {
 				$url->path = path( '/'.$this->_defaultController.'/exception' );
 			}
 			// Return the URL
@@ -248,9 +248,9 @@
 			return $controller->route( $method, $attachments );
 		}
 
-	 /**	  * Generate a response based on a given exception using a controller.
+	 /**
+	  * Generate a response based on a given exception using a controller.
 	  *
-
 	  * A URL is generated based on the given exception, with the pattern exception:/{code},
 	  * which the controller attempts to use to generate a response using `responseForURL`,
 	  * passing the exception itself as an attachment.

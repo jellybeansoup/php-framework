@@ -9,6 +9,25 @@
   */
 
  /**
+  * Fetch the current request headers.
+  *
+  * @return array A collection of the headers provided with the current HTTP request.
+  */
+
+	function request_headers() {
+		$headers = array();
+		foreach( $_SERVER as $key => $value ) {
+			if( substr( $key, 0, 5 ) !== 'HTTP_' ) {
+				continue;
+			}
+			$key = str_replace( ' ', '-', ucwords( underscore( substr( $key, 5 ), ' ' ) ) );
+			$key = preg_replace_callback( '/\b(TE|DNT|MD5)\b/i',function($matches){ return strtoupper($matches[0]); }, $key );
+			$headers[$key] = $value;
+		}
+		return $headers;
+	}
+
+ /**
   * Fetch the default message string for a HTTP status code.
   *
   * @throws InvalidArgumentException if the given `$code` is not a integer.
