@@ -105,13 +105,28 @@
 		private function primitiveOf( $data ) {
 			// If it's an object
 			if( is_object( $data ) ) {
-				$data = method_exists( $data, 'asArray' ) ? $data->asArray() : (array) $data;
+				// As an array
+				if( method_exists( $data, 'asArray' ) ) {
+					$data = $data->asArray();
+				}
+				// As a string
+				if( method_exists( $data, 'asString' ) ) {
+					$data = $data->asString();
+				}
+				// Default
+				else {
+					$data = (array) $data;
+				}
 			}
 			// If it's not an array, we convert
 			if( is_array( $data ) || is_object( $data ) ) {
 				foreach( $data as $key => $value ) {
 					$data[$key] = self::primitiveOf( $value );
 				}
+			}
+			// Encode strings as UTF8
+			if( is_string( $data ) ) {
+				$data = utf8_encode( $data );
 			}
 			// Return the converted values
 			return $data;
@@ -165,7 +180,7 @@
 				if( is_array( $value ) ) {
 					$node = $xml->addChild($key);
 					// recrusive call.
-					self::xml_encode( $value, $rootNodeName, $node );
+					self::xml_encode( $value, $key, $node );
 				}
 				else {
 					$value = htmlentities( (string) $value );

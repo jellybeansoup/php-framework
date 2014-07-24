@@ -191,7 +191,7 @@
 	  * @return \Framework\App\Response The HTTP response generated for the given `URL`.
 	  */
 
-		protected function responseForURL( \Framework\Core\URL $url, $attachments=array() ) {
+		public function responseForURL( \Framework\Core\URL $url, $attachments=array() ) {
 			// Add the URL as an attachment
 			array_unshift( $attachments, clone $url );
 			// Filter the URL
@@ -245,7 +245,9 @@
 				throw new HTTPNotFoundException;
 			}
 			// Otherwise we're done here. BOOM.
-			return $controller->route( $method, $attachments );
+			$reponse = $controller->route( $method, $attachments );
+			// And return
+			return $reponse;
 		}
 
 	 /**

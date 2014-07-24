@@ -93,6 +93,21 @@
 			return $this->_path;
 	  	}
 
+	 /**
+	  * Array Value
+	  *
+	  * @return
+	  */
+
+		public function asArray() {
+			return array(
+				'path' => (string) $this,
+				'basename' => (string) $this->lastComponent,
+				'filename' => (string) $this->filename,
+				'extension' => (string) $this->extension,
+			);
+	  	}
+
 //
 // Accessing the Parts of the URL
 //
@@ -357,6 +372,19 @@
 	  * @return string
 	  */
 
+		public function size() {
+			$size = filesize( $this->absolutePath() );
+	        if( $size < 0 ) {
+	            $size += 2.0 * ( PHP_INT_MAX + 1 );
+	        }
+	        return $size;
+	  	}
+
+	 /**
+	  *
+	  * @return string
+	  */
+
 		public function exists() {
 			return file_exists( $this->absolutePath() );
 	  	}
@@ -388,9 +416,9 @@
 	  * @return string The contents of the file.
 	  */
 
-		public function contents( $parameters=null ) {
+		public function contents( $parameters=false ) {
 			if( is_file( $absolutePath = $this->absolutePath() ) ) {
-				// Get the pur contents of the file
+				// Get the pure contents of the file
 				if( $parameters === false ) {
 					return file_get_contents( $absolutePath );
 				}
@@ -414,11 +442,8 @@
 	  * @return string
 	  */
 
-		public function setContents( $value ) {
-			if( is_file( $absolutePath = $this->absolutePath() ) ) {
-				return file_put_contents( $absolutePath, $value );
-			}
-			return false;
+		public function setContents( $value, $append=false ) {
+			return file_put_contents( $this->absolutePath(), $value, ( $append ) ? FILE_APPEND : 0 );
 	  	}
 
 	 /**
@@ -444,5 +469,38 @@
 			}
 			return null;
 	  	}
+
+	 /**
+	  *
+	  * @return mixed
+	  */
+
+		public function moveTo( Path $path ) {
+			return rename( $this->absolutePath(), $path->absolutePath() );
+	  	}
+
+	 /**
+	  *
+	  * @return mixed
+	  */
+
+		public function copyTo( Path $path ) {
+			return copy( $this->absolutePath(), $path->absolutePath() );
+	  	}
+
+	 /**
+	  *
+	  * @return mixed
+	  */
+
+		public function rename( $name ) {
+			$new = $this->pathByDeletingLastComponent->pathByAddingComponent( $name );
+			if( $this->moveTo( $new ) ) {
+				$this->_path = $new->_path;
+				return true;
+			}
+   			return false;
+	  	}
+
 
   	}

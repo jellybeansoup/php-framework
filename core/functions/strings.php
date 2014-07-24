@@ -202,7 +202,7 @@
 		// If we're using numerical character codes
 		if( $use_char_codes == true ) {
 			// Prepare a table of entities
-			$_entities = array(
+			static $_entities = array(
 				'&#039;' => '&#39;', '&AElig;' => '&#198;', '&Aacute;' => '&#193;', '&Acirc;' => '&#194;', '&Agrave;' => '&#192;',
 				'&Alpha;' => '&#913;', '&Aring;' => '&#197;', '&Atilde;' => '&#195;', '&Auml;' => '&#196;', '&Beta;' => '&#914;',
 				'&Ccedil;' => '&#199;', '&Chi;' => '&#935;', '&Dagger;' => '&#8225;', '&Delta;' => '&#916;', '&ETH;' => '&#208;',

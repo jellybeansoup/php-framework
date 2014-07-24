@@ -470,7 +470,10 @@
 	  * @return bool Flag indicating if the objects are equal.
 	  */
 
-		public final function isEqual( Object $object ) {
+		public function isEqual( Object $object ) {
+			if( get_class( $this ) !== get_class( $object ) ) {
+				return false;
+			}
 			return ( $this->hash() === $object->hash() );
 		}
 

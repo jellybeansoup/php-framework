@@ -62,12 +62,8 @@
 	  	public static final function instance() {
 		  	// Get the class
 	  		$class = self::className();
-		  	// Check for an existing instance
-		  	if( ! isset( self::$_instances[$class] ) ) {
-		  		self::$_instances[$class] = new $class;
-		  	}
-		  	// Return the instance
-		  	return self::$_instances[$class];
+		  	// Return a new instance instance
+		  	return new $class;
 	  	}
 
 //
@@ -177,8 +173,6 @@
 	  */
 
 	  	public function route( $methodName, $attachments ) {
-		  	// Grab a copy of the response object
-		  	$response = $this->response();
 	  		// Gather our prefixes
 		  	foreach( $this->_methodPrefixes() as $prefix ) {
 		  		// Prefix the given name
@@ -187,6 +181,8 @@
 			  	if( $this->hasPublicMethod( $prefixedMethodName ) ) {
 	  				// The response body is the return value of the called method.
 	  				$body = $this->callMethod( $prefixedMethodName, $attachments );
+				  	// Grab a copy of the response object
+				  	$response = $this->response();
 	  				// We run it through a body for additional formatting.
 	  				$response->body = $this->formatBody( $body, $attachments );
 	  				// Clear the stored response object.

@@ -168,13 +168,13 @@
 		public function setHeader( $key, $value ) {
 	  		// Check the given parameters
 		  	if( ! is_string( $key ) || $key === null ) {
-				throw new \InvalidArgumentException( 'Header key is expected to be an string.' );
+				throw new \InvalidArgumentException( 'Header key is expected to be a string.' );
 		  	}
-		  	if( ! is_string( $value ) || $key === null ) {
-				throw new \InvalidArgumentException( 'Header value is expected to be an string.' );
+		  	if( ! ( is_scalar( $value ) || ( is_object( $value ) && method_exists( $value, '__toString' ) ) ) || $value === null ) {
+				throw new \InvalidArgumentException( 'Header value is expected to be a scalar value.' );
 		  	}
 		  	// Store the header value
-			$this->_headers[$key] = $value;
+			$this->_headers[$key] = strval( $value );
 		}
 
 	 /**
@@ -187,7 +187,7 @@
 		public function header( $key ) {
 	  		// Check the given parameters
 		  	if( ! is_string( $key ) || $key === null ) {
-				throw new \InvalidArgumentException( 'Header key is expected to be an string.' );
+				throw new \InvalidArgumentException( 'Header key is expected to be a string.' );
 		  	}
 		  	// Return the value of the requested header if possible
 			return isset( $this->_headers[$key] ) ? $this->_headers[$key] : null;
@@ -203,7 +203,7 @@
 		public function clearHeader( $key ) {
 	  		// Check the given parameters
 		  	if( ! is_string( $key ) || $key === null ) {
-				throw new \InvalidArgumentException( 'Header key is expected to be an string.' );
+				throw new \InvalidArgumentException( 'Header key is expected to be a string.' );
 		  	}
 		  	// Clear the given header if possible
 		  	if( isset( $this->_headers[$key] ) ) {

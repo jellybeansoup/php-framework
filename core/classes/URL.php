@@ -206,10 +206,34 @@
 
 	 /**
 	  * String Value
+	  *
+	  * @return string
 	  */
 
 		public function asString() {
 			return $this->absoluteString();
+	  	}
+
+	 /**
+	  * Array Value
+	  *
+	  * @return array
+	  */
+
+		public function asArray() {
+			return array(
+				'scheme' => $this->scheme,
+				'host' => $this->host,
+				'port' => intVal( $this->port ),
+				'user' => $this->user,
+				'password' => $this->password,
+				'path' => $this->path,
+				'query' => $this->query,
+				'fragment' => $this->fragment,
+				'base' => $this->baseString,
+				'rootPath' => $this->rootPath,
+				'path' => $this->path,
+			);
 	  	}
 
 //
@@ -323,7 +347,8 @@
 			$current = new Url();
 			// If the two are Equal
 			if( $this->isEqual( $current ) ) {
-				return sprintf( './%@', $this->lastPathComponent().$this->query.$this->fragment );
+				$query = count( $this->query ) ? '?'.http_build_query( $this->query ) : null;
+				return sprintf( './%@', $this->lastPathComponent().$query.$this->fragment );
 			}
 			// Scheme, authentication, host or port isn't the same
 			if( $this->serverString() !== $current->serverString ) {
@@ -508,8 +533,8 @@
 	  *
 	  */
 
-		public function setQueryValueForKey( $key, &$value ) {
-			$self->query[$key] = $value;
+		public function setQueryValueForKey( $key, $value ) {
+			$this->query[$key] = $value;
 	  	}
 
 	 /**
@@ -517,7 +542,7 @@
 	  */
 
 		public function queryValueForKey( $key ) {
-			return $self->query[$key];
+			return $this->query[$key];
 	  	}
 
 	 /**
@@ -525,7 +550,7 @@
 	  */
 
 		public function deleteQueryValueForKey( $key ) {
-			unset( $self->query[$key] );
+			unset( $this->query[$key] );
 	  	}
 
   	}
