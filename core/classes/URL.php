@@ -542,7 +542,7 @@
 	  */
 
 		public function queryValueForKey( $key ) {
-			return $this->query[$key];
+			return isset( $this->query[$key] ) ? $this->query[$key] : null;
 	  	}
 
 	 /**
@@ -550,7 +550,9 @@
 	  */
 
 		public function deleteQueryValueForKey( $key ) {
-			unset( $this->query[$key] );
+			if( isset( $this->query[$key] ) ) {
+				unset( $this->query[$key] );
+			}
 	  	}
 
   	}
