@@ -64,7 +64,7 @@
 
 	function underscore( $string, $character='_' ) {
 		// Seperate camelcase
-		$string = preg_replace( '/([A-Z0-9]+)/i', ' $0', $string );
+		$string = preg_replace( '/([A-Z0-9]+)/', ' $0', $string );
 		// Convert non-alphanumeric characters
 		$string = preg_replace( '/([^A-Z0-9]+)/i', ' ', $string );
 		// Trim the string
