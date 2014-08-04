@@ -203,7 +203,7 @@
 		protected function identifier() {
 			// Set the identifier
 			if( ! $this->_identifier ) {
-				$this->_identifier = md5( sprintf( '%s::%s::%s::%s', $_SERVER['HTTP_HOST'], self::className(), time(), microtime() ) );
+				$this->_identifier = md5( sprintf( '%s::%s::%s::%s', serialize($_ENV), self::className(), time(), microtime() ) );
 			}
 			// Return the class
 			return $this->_identifier;
