@@ -151,7 +151,7 @@
 	  */
 
 	  	protected function _methodPrefixes() {
-	  		return array( $_SERVER['REQUEST_METHOD'], 'action' );
+	  		return array( Request::server('REQUEST_METHOD','cli'), 'action' );
 	  	}
 
 	 /**

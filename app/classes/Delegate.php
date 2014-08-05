@@ -110,16 +110,15 @@
 			$object->_options = $options;
 			// Store the object in the instances collection
 			self::$_applications[$className] = $object;
-			// Generate the response
-			$response = null;
-			try {
-				$response = $object->responseForURL( $object->_options['url'] );
+			// Generate the response for the URL given in the options
+			if( isset( $object->_options['url'] ) && $object->_options['url'] instanceof \Framework\Core\URL ) {
+				try {
+					return $object->responseForURL( $object->_options['url'] );
+				}
+				catch( \Exception $e ) {
+					return $object->responseForException( $e );
+				}
 			}
-			catch( \Exception $e ) {
-				$response = $object->responseForException( $e );
-			}
-			// Return the response
-			return $response;
 		}
 
 //

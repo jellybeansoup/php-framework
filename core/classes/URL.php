@@ -175,10 +175,10 @@
 					$this->rootPath = null;
 				}
 			}
-			elseif( $this->host == $_SERVER['HTTP_HOST'] && isset( $_SERVER['PATH_INFO'] ) ) {
+			elseif( isset( $_SERVER['HTTP_HOST'] ) && $this->host == $_SERVER['HTTP_HOST'] && isset( $_SERVER['PATH_INFO'] ) ) {
 				$this->path = new Path( $_SERVER['PATH_INFO'] );
 			}
-			elseif( $this->host == $_SERVER['HTTP_HOST'] && isset( $_SERVER['REQUEST_URI'] ) ) {
+			elseif( isset( $_SERVER['HTTP_HOST'] ) && $this->host == $_SERVER['HTTP_HOST'] && isset( $_SERVER['REQUEST_URI'] ) ) {
 				$pathinfo = $_SERVER['REQUEST_URI'];
 				if( ( $pos = strpos( $pathinfo, '?' ) ) !== false ) {
 					$pathinfo = substr( $pathinfo, 0, $pos );
@@ -199,7 +199,7 @@
 			if( isset( $segments['query'] ) ) {
 				parse_str( $segments['query'], $this->query );
 			}
-			elseif( ! isset( $segments ) && $_SERVER['QUERY_STRING'] ) {
+			elseif( ! isset( $segments ) && isset( $_SERVER['QUERY_STRING'] ) && strlen( $_SERVER['QUERY_STRING'] ) > 0 ) {
 				parse_str( $_SERVER['QUERY_STRING'], $this->query );
 			}
 	  	}
