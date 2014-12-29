@@ -368,6 +368,14 @@
 	class HTTPStatusException extends \Exception {
 
 	 /**
+	  * The reason given for the HTTP status exception.
+	  *
+	  * @var string
+	  */
+
+		protected $reason;
+
+	 /**
 	  * Exception constructor
 	  *
 	  * @param int $code A valid HTTP status code. Defaults to 500 (Internal Server Error)
@@ -375,7 +383,7 @@
 	  * @return self
 	  */
 
-		public function __construct( $code=500 ) {
+		public function __construct( $code=500, $reason=null ) {
 			// If we can't translate the code, revert to 500.
 			if( ! is_int( $code ) || ! http_translate_code( $code ) ) {
 				$code = 500;
@@ -383,6 +391,17 @@
 			// Store the code and the translation
 			$this->code = $code;
 			$this->message = http_translate_code( $code );
+			$this->reason = $reason;
+		}
+
+	 /**
+	  * Public getter for accessing the given reason.
+	  *
+	  * @return string The reason given for the HTTP status exception.
+	  */
+
+		public function getReason() {
+			return ! empty( $this->reason ) ? $this->reason : $this->getMessage();
 		}
 
 	}
