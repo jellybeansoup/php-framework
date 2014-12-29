@@ -443,6 +443,10 @@
 	  */
 
 		public function setContents( $value, $append=false ) {
+			$destinationFolder = $this->absolutePath()->pathByDeletingLastComponent();
+			if( ! is_dir( $destinationFolder ) ) {
+				mkdir( $destinationFolder, 0777, true );
+			}
 			return file_put_contents( $this->absolutePath(), $value, ( $append ) ? FILE_APPEND : 0 );
 	  	}
 
@@ -476,6 +480,10 @@
 	  */
 
 		public function moveTo( Path $path ) {
+			$destinationFolder = $path->pathByDeletingLastComponent();
+			if( ! is_dir( $destinationFolder ) ) {
+				mkdir( $destinationFolder, 0777, true );
+			}
 			return rename( $this->absolutePath(), $path->absolutePath() );
 	  	}
 
@@ -485,6 +493,10 @@
 	  */
 
 		public function copyTo( Path $path ) {
+			$destinationFolder = $path->pathByDeletingLastComponent();
+			if( ! is_dir( $destinationFolder ) ) {
+				mkdir( $destinationFolder, 0777, true );
+			}
 			return copy( $this->absolutePath(), $path->absolutePath() );
 	  	}
 
