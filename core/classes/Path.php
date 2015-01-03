@@ -514,5 +514,23 @@
    			return false;
 		}
 
+	 /**
+	  * Delete the file at the path.
+	  *
+	  * @return bool Flag indicating success (true) or failure (false).
+	  */
+
+		public function delete() {
+			$absolute_path = $this->absolutePath();
+			if( ! file_exists( $absolute_path ) ) {
+				return false;
+			}
+			else if( is_dir( $absolute_path ) ) {
+				return rmdir( $absolute_path );
+			}
+			else if( is_file( $absolute_path ) ) {
+				return unlink( $absolute_path );
+			}
+		}
 
 	}
