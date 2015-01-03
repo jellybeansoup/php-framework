@@ -79,7 +79,7 @@
 	 /**
 	  * Determine the name of the getter method for a dynamic property using the property's name.
 	  *
-	  * * If a method and defined property exist with the given name, the given name is used.
+	  * * If a method exists with the given name, the given name is used (regardless of whether a property exists).
 	  * * If a dynamic property has been defined in `Framework\Core\Object::$_dynamicProperties` with the given name and
 	  * 	a method has been defined with the `get` key, use the value of this element. Otherwise, if the dynamic
 	  *		property is defined, and a method exists with the same name, the defined name is used instead.
@@ -91,8 +91,8 @@
 	  */
 
 		protected final function __getMethodName( $propertyName ) {
-			// If the property and the method exist, call the method.
-			if( $this->hasProperty( $propertyName ) && $this->hasMethod( $propertyName ) ) {
+			// If a method exists for the property, call the method.
+			if( $this->hasGettableMethod( $propertyName ) ) {
 				return $propertyName;
 			}
 			// Fetch the current class
@@ -426,6 +426,25 @@
 		}
 
 	 /**
+	  * Determine if a method with the given method name exists with no required paramters (true) or not (false).
+	  *
+	  * @return bool Flag indicating if the object has a "gettable" method matching the given name.
+	  */
+
+		public final function hasGettableMethod( $method ) {
+			// Use a reflection
+			$reflect = $this->_reflectionForMethod( $method );
+
+			// If no reflection exists, no method exists
+			if( $reflect === null ) {
+				return false;
+			}
+
+			// If the method has zero required parameters
+			return ( $reflect->getNumberOfRequiredParameters() === 0 );
+		}
+
+	 /**
 	  * Determine if the object has a public method matching the given name (true) or not (false).
 	  *
 	  * @return bool Flag indicating if the object has a public method matching the given name.
@@ -482,9 +501,9 @@
 //
 
 	 /**
-	  * Determine if the object is equal to the provided object.
+	  * Get a reflection object for the current object.
 	  *
-	  * @return bool Flag indicating if the objects are equal.
+	  * @return ReflectionObject A reflection object for the reciever, or null if none exists.
 	  */
 
 		protected final function _reflection() {
@@ -497,9 +516,9 @@
 		}
 
 	 /**
-	  * Determine if the object is equal to the provided object.
+	  * Get a reflection object for the method on the current object that matches the given method name.
 	  *
-	  * @return bool Flag indicating if the objects are equal.
+	  * @return ReflectionMethod A reflection object for the method named, or null if none exists.
 	  */
 
 		protected final function _reflectionForMethod( $method ) {
