@@ -56,6 +56,23 @@
 		protected static $_dynamicProperties = array();
 
 	 /**
+	  * Get the value of a parameter set for a dynamic property.
+	  *
+	  * ```php
+	  * self::_dynamicPropertyArgument( 'differentProperty', 'get' );
+	  * ```
+	  *
+	  * @return mixed The value of the requested argument for the dynamic property. Returns null if not set.
+	  */
+
+		protected static function _dynamicPropertyArgument( $property, $key ) {
+			if( ! isset( self::$_dynamicProperties[$property][$key] ) ) {
+				return null;
+			}
+			return self::$_dynamicProperties[$property][$key];
+		}
+
+	 /**
 	  * Get the value of a property.
 	  * This method expects that a method matching the name of the property exists, i.e. propertyName -> propertyName()
 	  *
