@@ -16,7 +16,7 @@
   * Class Manager
   */
 
-  	class Image extends Object {
+	class Image extends Object {
 
 	 /**
 	  * Dynamic properties

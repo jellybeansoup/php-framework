@@ -37,11 +37,11 @@
   */
 
 	function http_translate_code( $code ) {
-  		// Check the given parameters
-	  	if( ! is_int( $code )  ) {
+		// Check the given parameters
+		if( ! is_int( $code )  ) {
 			throw new \InvalidArgumentException( 'Status is expected to be an integer.' );
-	  	}
-	  	// Return the string matching the given code.
+		}
+		// Return the string matching the given code.
 		switch( $code ) {
 			case 100: return 'Continue'; break;
 			case 101: return 'Switching Protocols'; break;
@@ -83,4 +83,4 @@
 		}
 		// Default is null
 		return null;
-  	}
+	}

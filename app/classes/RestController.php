@@ -17,7 +17,7 @@
   * @license FreeBSD
   */
 
-  	abstract class RestController extends \Framework\App\Controller {
+	abstract class RestController extends \Framework\App\Controller {
 
 	 /**
 	  * Dynamic properties
@@ -42,7 +42,7 @@
 	  * @var string
 	  */
 
-	  	private $_format = 'json';
+		private $_format = 'json';
 
 	 /**
 	  * Fetch the format to controller will use for the response body.
@@ -50,9 +50,9 @@
 	  * @return string
 	  */
 
-	  	public final function format() {
-		  	return $this->_format;
-	  	}
+		public final function format() {
+			return $this->_format;
+		}
 
 //
 // Routing the method call
@@ -69,9 +69,9 @@
 	  * @return string The formatted response body.
 	  */
 
-	  	public function formatBody( $body, $attachments ) {
-	  		// We can usually count on the URL being the first attachment
-	  		$url = reset( $attachments );
+		public function formatBody( $body, $attachments ) {
+			// We can usually count on the URL being the first attachment
+			$url = reset( $attachments );
 			// We provide rendered responses for HTTP requests
 			if( in_array( $url->scheme, array( 'http', 'https', 'exception' ) ) ) {
 				// Get the content format
@@ -100,7 +100,7 @@
 			}
 			// For other requests, we provide the raw data
 			return $body;
-	  	}
+		}
 
 		private function primitiveOf( $data ) {
 			// If it's an object
@@ -244,4 +244,4 @@
 			return implode( "\r\n", $csv );
 		}
 
-  	}
+	}

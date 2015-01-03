@@ -267,11 +267,11 @@
 		protected final static function classNamespace() {
 			$class = trim( self::className(), "\\ \t\n\r\0\x0B" );
 			// Find the namespace
-	  		if( $pos = strrpos( $class, '\\' ) ) {
-	  			return substr( $class, 0, $pos );
-	  		}
-	  		// No namespace
-	  		return null;
+			if( $pos = strrpos( $class, '\\' ) ) {
+				return substr( $class, 0, $pos );
+			}
+			// No namespace
+			return null;
 		}
 
 //
@@ -577,4 +577,4 @@
 			return $instance;
 	    }
 
-    }
+	}

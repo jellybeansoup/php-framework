@@ -32,7 +32,7 @@
   * @license FreeBSD
   */
 
-  	class Response extends \Framework\Core\Object {
+	class Response extends \Framework\Core\Object {
 
 	 /**
 	  * Dynamic properties
@@ -60,7 +60,7 @@
 		public final function __construct( $body=null, $code=200 ) {
 			$this->_body = $body;
 			$this->_status = $code;
-	  	}
+		}
 
 //
 // HTTP status code
@@ -97,11 +97,11 @@
 	  */
 
 		public function setStatus( $code ) {
-	  		// Check the given parameters
-		  	if( ! is_int( $code )  ) {
+			// Check the given parameters
+			if( ! is_int( $code )  ) {
 				throw new \InvalidArgumentException( 'Status is expected to be an integer.' );
-		  	}
-		  	// If the code cannot be translated, default to 500 (Internal Server Error).
+			}
+			// If the code cannot be translated, default to 500 (Internal Server Error).
 			if( http_translate_code( $code ) === null ) {
 				$code = 500;
 			}
@@ -166,14 +166,14 @@
 	  */
 
 		public function setHeader( $key, $value ) {
-	  		// Check the given parameters
-		  	if( ! is_string( $key ) || $key === null ) {
+			// Check the given parameters
+			if( ! is_string( $key ) || $key === null ) {
 				throw new \InvalidArgumentException( 'Header key is expected to be a string.' );
-		  	}
-		  	if( ! ( is_scalar( $value ) || ( is_object( $value ) && method_exists( $value, '__toString' ) ) ) || $value === null ) {
+			}
+			if( ! ( is_scalar( $value ) || ( is_object( $value ) && method_exists( $value, '__toString' ) ) ) || $value === null ) {
 				throw new \InvalidArgumentException( 'Header value is expected to be a scalar value.' );
-		  	}
-		  	// Store the header value
+			}
+			// Store the header value
 			$this->_headers[$key] = strval( $value );
 		}
 
@@ -185,11 +185,11 @@
 	  */
 
 		public function header( $key ) {
-	  		// Check the given parameters
-		  	if( ! is_string( $key ) || $key === null ) {
+			// Check the given parameters
+			if( ! is_string( $key ) || $key === null ) {
 				throw new \InvalidArgumentException( 'Header key is expected to be a string.' );
-		  	}
-		  	// Return the value of the requested header if possible
+			}
+			// Return the value of the requested header if possible
 			return isset( $this->_headers[$key] ) ? $this->_headers[$key] : null;
 		}
 
@@ -201,14 +201,14 @@
 	  */
 
 		public function clearHeader( $key ) {
-	  		// Check the given parameters
-		  	if( ! is_string( $key ) || $key === null ) {
+			// Check the given parameters
+			if( ! is_string( $key ) || $key === null ) {
 				throw new \InvalidArgumentException( 'Header key is expected to be a string.' );
-		  	}
-		  	// Clear the given header if possible
-		  	if( isset( $this->_headers[$key] ) ) {
+			}
+			// Clear the given header if possible
+			if( isset( $this->_headers[$key] ) ) {
 				unset( $this->_headers[$key] );
-		  	}
+			}
 		}
 
 //
@@ -248,10 +248,10 @@
 	  */
 
 		public function setBody( $body ) {
-	  		// Check the given parameters
-		  	if( ! ( is_scalar( $body ) || ( is_object( $body ) && method_exists( $body, '__toString' ) ) ) ) {
+			// Check the given parameters
+			if( ! ( is_scalar( $body ) || ( is_object( $body ) && method_exists( $body, '__toString' ) ) ) ) {
 				throw new \InvalidArgumentException( 'The response body is expected to be a scalar value.' );
-		  	}
+			}
 			// Store the code value
 			$this->_body = $body;
 		}
@@ -286,4 +286,4 @@
 			exit( (string) $this->body );
 		}
 
-  	}
+	}

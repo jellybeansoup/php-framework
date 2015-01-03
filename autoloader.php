@@ -55,10 +55,10 @@
 	  */
 
 		private function __construct( $path, $namespace ) {
-	  		// Check the given parameters
-		  	if( ! is_string( $path ) ) {
+			// Check the given parameters
+			if( ! is_string( $path ) ) {
 				throw new \InvalidArgumentException( 'Path is expected to be a string.' );
-		  	}
+			}
 			// Check that the library exists
 			if( ! file_exists( $path ) || ! is_dir( $path ) ) {
 				throw new \InvalidLibraryException( 'Library does not exist at '.$path.'.' );
@@ -83,10 +83,10 @@
 	  */
 
 		private static function load( $path, $namespace ) {
-	  		// Check the given parameters
-		  	if( ! is_string( $path ) ) {
+			// Check the given parameters
+			if( ! is_string( $path ) ) {
 				throw new \InvalidArgumentException( 'Path is expected to be a string.' );
-		  	}
+			}
 			// Check that the library exists
 			if( ! file_exists( $path ) || ! is_dir( $path ) ) {
 				throw new \InvalidLibraryException( 'Library does not exist at '.$path.'.' );
@@ -108,12 +108,12 @@
 	  */
 
 		public static function forNamespace( $namespace ) {
-		  	// Get the base directory
-	  		$basedir = defined('__BASEDIR__')?__BASEDIR__:dirname(__FILE__);
-	  		// Check the given parameters
-		  	if( ! is_string( $namespace ) ) {
+			// Get the base directory
+			$basedir = defined('__BASEDIR__')?__BASEDIR__:dirname(__FILE__);
+			// Check the given parameters
+			if( ! is_string( $namespace ) ) {
 				throw new \InvalidArgumentException( 'Namespace is expected to be a string.' );
-		  	}
+			}
 			// Divide up the namespace
 			$segments = explode( '\\', trim( $namespace, "\\ \t\n\r\0\x0B" ) );
 			// Framework libraries
@@ -179,10 +179,10 @@
 	  */
 
 		public static function forClass( $class ) {
-	  		// Check the given parameters
-		  	if( ! is_string( $class ) ) {
+			// Check the given parameters
+			if( ! is_string( $class ) ) {
 				throw new \InvalidArgumentException( 'Class name is expected to be a string.' );
-		  	}
+			}
 			// Divide up the namespace
 			$segments = explode( '\\', trim( $class, "\\ \t\n\r\0\x0B" ) );
 			// General libraries
@@ -229,16 +229,16 @@
 	  * @return mixed The value for the requested property. Defaults to null.
 	  */
 
-	  	public function __get( $property ) {
-		  	switch( $property ) {
-			  	case 'path' :
-			  		return $this->_path;
-			  	case 'namespace' :
-			  		return $this->_namespace;
-			  	default:
-			  		return null;
-		  	}
-	  	}
+		public function __get( $property ) {
+			switch( $property ) {
+				case 'path' :
+					return $this->_path;
+				case 'namespace' :
+					return $this->_namespace;
+				default:
+					return null;
+			}
+		}
 
 
 	 /**
@@ -366,22 +366,22 @@
   * @return void
   */
 
-  	function __autoload( $className ) {
-	  	// Get the base directory
-  		$basedir = defined('__BASEDIR__')?__BASEDIR__:dirname(__FILE__);
-  		// Try and get a library!
-  		try {
-	  		$library = Library::forClass( $className );
-  		}
-  		catch ( Exception $e ) {
-	  		throw $e;
-  		}
-  		// No library found. Break everything.
-  		if( ! isset( $library ) || ! $library instanceof Library ) {
+	function __autoload( $className ) {
+		// Get the base directory
+		$basedir = defined('__BASEDIR__')?__BASEDIR__:dirname(__FILE__);
+		// Try and get a library!
+		try {
+			$library = Library::forClass( $className );
+		}
+		catch ( Exception $e ) {
+			throw $e;
+		}
+		// No library found. Break everything.
+		if( ! isset( $library ) || ! $library instanceof Library ) {
 			throw new \Exception( 'Library does not exist for `'.$className.'`.' );
 		}
-  		// Try loading the class
-  		if( ! $library->loadClass( $className ) ) {
+		// Try loading the class
+		if( ! $library->loadClass( $className ) ) {
 			throw new \Exception( 'Class `'.$className.'` is not available.' );
 		}
 	}

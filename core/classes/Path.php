@@ -14,7 +14,7 @@
   * Class Manager
   */
 
-  	class Path extends Object {
+	class Path extends Object {
 
 //
 // Properties
@@ -81,7 +81,7 @@
 			$cleanPath = preg_replace( '/[\/]+/', '/', $cleanPath );
 			$cleanPath = $startsWithSlash ? '/'.$cleanPath : $cleanPath;
 			$this->_path = $cleanPath ? $cleanPath : '/';
-	  	}
+		}
 
 	 /**
 	  * String Value
@@ -91,7 +91,7 @@
 
 		public function asString() {
 			return $this->_path;
-	  	}
+		}
 
 	 /**
 	  * Array Value
@@ -106,7 +106,7 @@
 				'filename' => (string) $this->filename,
 				'extension' => (string) $this->extension,
 			);
-	  	}
+		}
 
 //
 // Accessing the Parts of the URL
@@ -119,7 +119,7 @@
 
 		public static function create( $string=null ) {
 			return new self( $string );
-	  	}
+		}
 
 //
 // Accessing the Parts of the URL
@@ -133,7 +133,7 @@
 
 		public function absolutePath() {
 			return $this->root()->pathByAddingComponent( $this->_path );
-	  	}
+		}
 
 	 /**
 	  *
@@ -150,7 +150,7 @@
 				$root->_path = DIRECTORY_SEPARATOR.document_root();
 			}
 			return $root;
-	  	}
+		}
 
 	 /**
 	  *
@@ -160,7 +160,7 @@
 
 		public function setRoot( $root ) {
 			$this->_root = $root;
-	  	}
+		}
 
 	 /**
 	  * The last component of the path
@@ -170,7 +170,7 @@
 
 		public function lastComponent() {
 			return pathinfo( $this->_path, PATHINFO_BASENAME );
-	  	}
+		}
 
 	 /**
 	  * The path after removing the final component
@@ -191,7 +191,7 @@
 			$path = new Path( implode( DIRECTORY_SEPARATOR, $components ) );
 			$path->_root = $this->_root;
 			return $path;
-	  	}
+		}
 
 	 /**
 	  * The path with a new component
@@ -203,7 +203,7 @@
 			$path = new Path( $this->_path.DIRECTORY_SEPARATOR.$component );
 			$path->_root = $this->_root;
 			return $path;
-	  	}
+		}
 
 	 /**
 	  * The path after removing the final component
@@ -221,7 +221,7 @@
 			$path = new Path( substr( $this->_path, 0, $len ) );
 			$path->_root = $this->_root;
 			return $path;
-	  	}
+		}
 
 	 /**
 	  * The path components as an indexed array
@@ -241,7 +241,7 @@
 			}
 			// Default is an empty array
 			return array();
-	  	}
+		}
 
 	 /**
 	  * Fetch the component at the given index.
@@ -252,7 +252,7 @@
 
 		public function componentAtIndex( $index ) {
 			return isset( $this->components[$index] ) ? $this->components[$index] : null;
-	  	}
+		}
 
 	 /**
 	  * The filename
@@ -262,7 +262,7 @@
 
 		public function filename() {
 			return pathinfo( $this->_path, PATHINFO_FILENAME );
-	  	}
+		}
 
 	 /**
 	  * The extension of the path
@@ -272,7 +272,7 @@
 
 		public function extension() {
 			return pathinfo( $this->_path, PATHINFO_EXTENSION );
-	  	}
+		}
 
 	 /**
 	  * The path after removing the extension
@@ -284,7 +284,7 @@
 			$path = new Path( $this->_path.'.'.$extension );
 			$path->_root = $this->_root;
 			return $path;
-	  	}
+		}
 
 	 /**
 	  * The path after removing the extension
@@ -302,7 +302,7 @@
 			$path = new Path( substr( $this->_path, 0, $len ) );
 			$path->_root = $this->_root;
 			return $path;
-	  	}
+		}
 
 	 /**
 	  * The extension of the path
@@ -312,7 +312,7 @@
 
 		public function trimmed() {
 			return trim( $this->_path, DIRECTORY_SEPARATOR." \t\n\r\0\x0B" );
-	  	}
+		}
 
 //
 // Comparing paths
@@ -325,7 +325,7 @@
 
 		public function isSubpathOf( Path $path ) {
 			return ( strpos( $this->_path, (string) $path ) === 0 );
-	  	}
+		}
 
 	 /**
 	  * Fetch the current path, relative to the given path.
@@ -361,7 +361,7 @@
 				$relative[] = $part;
 			}
 			return new Path( implode( DIRECTORY_SEPARATOR, $relative ) );
-	  	}
+		}
 
 //
 // Working with file contents
@@ -378,7 +378,7 @@
 	            $size += 2.0 * ( PHP_INT_MAX + 1 );
 	        }
 	        return $size;
-	  	}
+		}
 
 	 /**
 	  *
@@ -387,7 +387,7 @@
 
 		public function exists() {
 			return file_exists( $this->absolutePath() );
-	  	}
+		}
 
 	 /**
 	  *
@@ -396,7 +396,7 @@
 
 		public function isFile() {
 			return is_file( $this->absolutePath() );
-	  	}
+		}
 
 	 /**
 	  *
@@ -405,7 +405,7 @@
 
 		public function isFolder() {
 			return is_dir( $this->absolutePath() );
-	  	}
+		}
 
 	 /**
 	  * Fetch the content of the file at the current path.
@@ -422,20 +422,20 @@
 				if( $parameters === false ) {
 					return file_get_contents( $absolutePath );
 				}
-		  		// Extract the data variables
-		  		if( is_array( $parameters ) ) {
-			  		extract( $parameters, EXTR_OVERWRITE );
-		  		}
-		  		// Require the file and buffer the output
-		  		ob_start();
-		  		require $absolutePath;
+				// Extract the data variables
+				if( is_array( $parameters ) ) {
+					extract( $parameters, EXTR_OVERWRITE );
+				}
+				// Require the file and buffer the output
+				ob_start();
+				require $absolutePath;
 				$bufferContents = ob_get_contents();
-		  		ob_end_clean();
-		  		// Return the content
-		  		return $bufferContents;
+				ob_end_clean();
+				// Return the content
+				return $bufferContents;
 			}
 			return null;
-	  	}
+		}
 
 	 /**
 	  *
@@ -448,7 +448,7 @@
 				mkdir( $destinationFolder, 0777, true );
 			}
 			return file_put_contents( $this->absolutePath(), $value, ( $append ) ? FILE_APPEND : 0 );
-	  	}
+		}
 
 	 /**
 	  *
@@ -460,7 +460,7 @@
 				return ( $once === true ) ? include_once $absolutePath : include $absolutePath;
 			}
 			return null;
-	  	}
+		}
 
 	 /**
 	  *
@@ -472,7 +472,7 @@
 				return ( $once === true ) ? require_once $absolutePath : require $absolutePath;
 			}
 			return null;
-	  	}
+		}
 
 	 /**
 	  *
@@ -485,7 +485,7 @@
 				mkdir( $destinationFolder, 0777, true );
 			}
 			return rename( $this->absolutePath(), $path->absolutePath() );
-	  	}
+		}
 
 	 /**
 	  *
@@ -498,7 +498,7 @@
 				mkdir( $destinationFolder, 0777, true );
 			}
 			return copy( $this->absolutePath(), $path->absolutePath() );
-	  	}
+		}
 
 	 /**
 	  *
@@ -512,7 +512,7 @@
 				return true;
 			}
    			return false;
-	  	}
+		}
 
 
-  	}
+	}

@@ -12,20 +12,21 @@
   * Determine whether an array contains any associative keys.
   *
   * @param array $array The array to check.
+  * @param bool $strict If true, all of the keys in the array must be strings.
   * @return bool A flag indicating whether the array is associative (true) or not (false).
   */
 
-	function is_assoc( $array ) {
-  		// Check the given parameters
-	  	if( ! is_array( $array ) ) {
+	function is_assoc( $array, $strict=false ) {
+		// Check the given parameters
+		if( ! is_array( $array ) ) {
 			throw new \InvalidArgumentException;
-	  	}
+		}
 		// We just want the keys, really
 		$keys = array_keys( $array );
 		// Filter the keys to just those that are strings
 		$keys = array_filter( $keys, 'is_string' );
 		// If there are keys left, the array is associative
-		return ( count( $keys ) > 0 );
+		return ( ( $strict && count( $keys ) === count( $array ) ) || count( $keys ) > 0 );
 	}
 
  /**
@@ -36,10 +37,10 @@
   */
 
 	function is_indexed( $array ) {
-  		// Check the given parameters
-	  	if( ! is_array( $array ) ) {
+		// Check the given parameters
+		if( ! is_array( $array ) ) {
 			throw new \InvalidArgumentException;
-	  	}
+		}
 		// We just want the keys, really
 		$keys = array_keys( $array );
 		// Filter the keys to just those that are strings
@@ -58,13 +59,13 @@
   */
 
 	function array_remove( $array, $value, $ignoreKeys=false ) {
-  		// Check the given parameters
-	  	if( ! is_array( $array ) ) {
+		// Check the given parameters
+		if( ! is_array( $array ) ) {
 			throw new \InvalidArgumentException;
-	  	}
-	  	if( ! is_bool( $ignoreKeys ) ) {
+		}
+		if( ! is_bool( $ignoreKeys ) ) {
 			throw new \InvalidArgumentException;
-	  	}
+		}
 		// Find the key for the given value
 		while( ( $key = array_search( $value, $array ) ) !== false ) {
 			unset( $array[$key] );
@@ -86,13 +87,13 @@
   */
 
 	function array_call_method( &$array, $methodName, $args=null ) {
-  		// Check the given parameters
-	  	if( ! is_string( $methodName ) ) {
+		// Check the given parameters
+		if( ! is_string( $methodName ) ) {
 			throw new \InvalidArgumentException;
-	  	}
-	  	if( $args !== null && ! is_array( $args ) ) {
+		}
+		if( $args !== null && ! is_array( $args ) ) {
 			throw new \InvalidArgumentException;
-	  	}
+		}
 		// We need to ensure all the objects have the given method
 		$filtered = array_filter( $array, function( $item ) use( $methodName ) {
 			return ( is_object( $item ) && method_exists( $item, $methodName ) );

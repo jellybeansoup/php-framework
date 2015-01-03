@@ -14,7 +14,7 @@
   * URL Class
   */
 
-  	class URL extends Object {
+	class URL extends Object {
 
 //
 // Properties
@@ -202,7 +202,7 @@
 			elseif( ! isset( $segments ) && isset( $_SERVER['QUERY_STRING'] ) && strlen( $_SERVER['QUERY_STRING'] ) > 0 ) {
 				parse_str( $_SERVER['QUERY_STRING'], $this->query );
 			}
-	  	}
+		}
 
 	 /**
 	  * String Value
@@ -212,7 +212,7 @@
 
 		public function asString() {
 			return $this->absoluteString();
-	  	}
+		}
 
 	 /**
 	  * Array Value
@@ -234,7 +234,7 @@
 				'rootPath' => $this->rootPath,
 				'path' => $this->path,
 			);
-	  	}
+		}
 
 //
 // Accessing the Parts of the URL
@@ -246,7 +246,7 @@
 
 		public static function create( $string=null ) {
 			return new self( $string );
-	  	}
+		}
 
 	 /**
 	  *
@@ -254,7 +254,7 @@
 
 		public static function current() {
 			return self::create();
-	  	}
+		}
 
 	 /**
 	  *
@@ -262,7 +262,7 @@
 
 		public static function root() {
 			return self::create( '/' );
-	  	}
+		}
 
 //
 // Accessing the Parts of the URL
@@ -288,7 +288,7 @@
 				$path = '';
 			// Build a string
 			return $this->serverString().$path.$query.$fragment;
-	  	}
+		}
 
 	 /**
 	  *
@@ -296,7 +296,7 @@
 
 		public function baseString() {
 			return $this->serverString().$this->rootPath;
-	  	}
+		}
 
 	 /**
 	  *
@@ -304,7 +304,7 @@
 
 		public function extendedPath() {
 			return new Path( $this->host.$this->rootPath.$this->path );
-	  	}
+		}
 
 	 /**
 	  *
@@ -312,7 +312,7 @@
 
 		public function fullPath() {
 			return new Path( $this->rootPath.$this->path );
-	  	}
+		}
 
 	 /**
 	  *
@@ -320,7 +320,7 @@
 
 		public function lastPathComponent() {
 			return ( $this->path != null ) ? $this->path->lastComponent : null;
-	  	}
+		}
 
 	 /**
 	  *
@@ -328,7 +328,7 @@
 
 		public function pathComponents() {
 			return ( $this->path != null ) ? $this->path->components : null;
-	  	}
+		}
 
 	 /**
 	  *
@@ -336,7 +336,7 @@
 
 		public function pathExtension() {
 			return ( $this->path != null ) ? $this->path->extension : null;
-	  	}
+		}
 
 	 /**
 	  *
@@ -370,7 +370,7 @@
 			}
 			// And return
 			return implode( null, $relativeComponents );
-	  	}
+		}
 
 	 /**
 	  *
@@ -378,7 +378,7 @@
 
 		public function resourceSpecifier() {
 			return preg_replace('/^[\w]+:/i',null,$this->absoluteString());
-	  	}
+		}
 
 	 /**
 	  *
@@ -406,7 +406,7 @@
 			}
 			// Build a string
 			return sprintf( '%s:%s', $this->scheme, $host );
-	  	}
+		}
 
 	 /**
 	  * Find and strip matching XML/HTML tags from the provided content string.
@@ -535,7 +535,7 @@
 
 		public function setQueryValueForKey( $key, $value ) {
 			$this->query[$key] = $value;
-	  	}
+		}
 
 	 /**
 	  *
@@ -543,7 +543,7 @@
 
 		public function queryValueForKey( $key ) {
 			return isset( $this->query[$key] ) ? $this->query[$key] : null;
-	  	}
+		}
 
 	 /**
 	  *
@@ -553,6 +553,6 @@
 			if( isset( $this->query[$key] ) ) {
 				unset( $this->query[$key] );
 			}
-	  	}
+		}
 
-  	}
+	}

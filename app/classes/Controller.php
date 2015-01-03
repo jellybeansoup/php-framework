@@ -17,7 +17,7 @@
   * @license FreeBSD
   */
 
-  	abstract class Controller extends \Framework\Core\Object {
+	abstract class Controller extends \Framework\Core\Object {
 
 	 /**
 	  * Dynamic properties
@@ -41,7 +41,7 @@
 	  * @var array
 	  */
 
-	  	private static $_instances = array();
+		private static $_instances = array();
 
 	 /**
 	  * Private constructor
@@ -49,7 +49,7 @@
 	  * @return self
 	  */
 
-	  	private final function __construct() {}
+		private final function __construct() {}
 
 	 /**
 	  * Fetch an instance of the calling controller class.
@@ -59,12 +59,12 @@
 	  * @return self
 	  */
 
-	  	public static final function instance() {
-		  	// Get the class
-	  		$class = self::className();
-		  	// Return a new instance instance
-		  	return new $class;
-	  	}
+		public static final function instance() {
+			// Get the class
+			$class = self::className();
+			// Return a new instance instance
+			return new $class;
+		}
 
 //
 // Handling the response
@@ -77,7 +77,7 @@
 	  * @var Framework\App\Response
 	  */
 
-	  	private $_response = null;
+		private $_response = null;
 
 	 /**
 	  * Storage for the controller's response.
@@ -85,14 +85,14 @@
 	  * @var Framework\App\Response
 	  */
 
-	  	public final function response() {
-		  	// Check for an existing instance
-		  	if( $this->_response === null ) {
-		  		$this->_response = new Response;
-		  	}
-		  	// Return the instance
-		  	return $this->_response;
-	  	}
+		public final function response() {
+			// Check for an existing instance
+			if( $this->_response === null ) {
+				$this->_response = new Response;
+			}
+			// Return the instance
+			return $this->_response;
+		}
 
 	 /**
 	  * Set the HTTP status on the response.
@@ -104,9 +104,9 @@
 	  * @return void
 	  */
 
-	  	public final function setStatus( $code ) {
-		  	$this->response()->setStatus( $code );
-	  	}
+		public final function setStatus( $code ) {
+			$this->response()->setStatus( $code );
+		}
 
 	 /**
 	  * Set a HTTP header on the response.
@@ -119,9 +119,9 @@
 	  * @return void
 	  */
 
-	  	public final function setHeader( $key, $value ) {
-		  	$this->response()->setHeader( $key, $value );
-	  	}
+		public final function setHeader( $key, $value ) {
+			$this->response()->setHeader( $key, $value );
+		}
 
 	 /**
 	  * Clear a HTTP header on the response.
@@ -133,9 +133,9 @@
 	  * @return void
 	  */
 
-	  	public final function clearHeader( $key ) {
-		  	$this->response()->clearHeader( $key );
-	  	}
+		public final function clearHeader( $key ) {
+			$this->response()->clearHeader( $key );
+		}
 
 //
 // Routing the method call
@@ -150,9 +150,9 @@
 	  * @var string
 	  */
 
-	  	protected function _methodPrefixes() {
-	  		return array( Request::server('REQUEST_METHOD','cli'), 'action' );
-	  	}
+		protected function _methodPrefixes() {
+			return array( Request::server('REQUEST_METHOD','cli'), 'action' );
+		}
 
 	 /**
 	  * Route a given method name, with provided attachments.
@@ -172,28 +172,28 @@
 	  *   as the body, or null if the routing fails.
 	  */
 
-	  	public function route( $methodName, $attachments ) {
-	  		// Gather our prefixes
-		  	foreach( $this->_methodPrefixes() as $prefix ) {
-		  		// Prefix the given name
-			  	$prefixedMethodName = strtolower( $prefix ).ucfirst( $methodName );
-			  	// If a matching public method exists, make the call.
-			  	if( $this->hasPublicMethod( $prefixedMethodName ) ) {
-	  				// The response body is the return value of the called method.
-	  				$body = $this->callMethod( $prefixedMethodName, $attachments );
-				  	// Grab a copy of the response object
-				  	$response = $this->response();
-	  				// We run it through a body for additional formatting.
-	  				$response->body = $this->formatBody( $body, $attachments );
-	  				// Clear the stored response object.
-	  				unset( $this->_response );
-	  				// Return the response object.
-	  				return $response;
-			  	}
-		  	}
-  			// We failed
-  			return null;
-	  	}
+		public function route( $methodName, $attachments ) {
+			// Gather our prefixes
+			foreach( $this->_methodPrefixes() as $prefix ) {
+				// Prefix the given name
+				$prefixedMethodName = strtolower( $prefix ).ucfirst( $methodName );
+				// If a matching public method exists, make the call.
+				if( $this->hasPublicMethod( $prefixedMethodName ) ) {
+					// The response body is the return value of the called method.
+					$body = $this->callMethod( $prefixedMethodName, $attachments );
+					// Grab a copy of the response object
+					$response = $this->response();
+					// We run it through a body for additional formatting.
+					$response->body = $this->formatBody( $body, $attachments );
+					// Clear the stored response object.
+					unset( $this->_response );
+					// Return the response object.
+					return $response;
+				}
+			}
+			// We failed
+			return null;
+		}
 
 	 /**
 	  * Hook for pre-formatting the response body.
@@ -206,9 +206,9 @@
 	  * @return string The formatted response body.
 	  */
 
-	  	public function formatBody( $body, $attachments ) {
-	  		return strval( $body );
-	  	}
+		public function formatBody( $body, $attachments ) {
+			return strval( $body );
+		}
 
 	 /**
 	  * Determine whether a given method name can be routed successfully.
@@ -225,18 +225,18 @@
 	  * @return bool A flag indicating if the given method can be routed (true) or not (false).
 	  */
 
-	  	public function canRoute( $methodName ) {
-	  		// Gather our prefixes
-		  	foreach( $this->_methodPrefixes() as $prefix ) {
-		  		// Prefix the given name
-			  	$prefixedMethodName = strtolower( $prefix ).ucfirst( $methodName );
-			  	// If a matching public method exists, return true.
-			  	if( $this->hasPublicMethod( $prefixedMethodName ) ) {
-	  				return true;
-			  	}
-		  	}
-  			// No matching methods
-  			return false;
-	  	}
+		public function canRoute( $methodName ) {
+			// Gather our prefixes
+			foreach( $this->_methodPrefixes() as $prefix ) {
+				// Prefix the given name
+				$prefixedMethodName = strtolower( $prefix ).ucfirst( $methodName );
+				// If a matching public method exists, return true.
+				if( $this->hasPublicMethod( $prefixedMethodName ) ) {
+					return true;
+				}
+			}
+			// No matching methods
+			return false;
+		}
 
-  	}
+	}
