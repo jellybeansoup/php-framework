@@ -337,7 +337,7 @@
 
 	function plural_of( $word ) {
 		$result = strval( $word );
-		$uncountable = array( 'money', 'rice', 'series', 'fish', 'species', 'information', 'meta', 'equipment' );
+		$uncountable = array( 'money', 'rice', 'series', 'fish', 'species', 'information', 'meta', 'equipment', 'maths', 'math' );
 
 		if( in_array( $result, $uncountable ) ) {
 			return $result;
@@ -384,7 +384,7 @@
 
 	function singular_of( $word ) {
 		$result = strval( $word );
-		$uncountable = array( 'money', 'rice', 'series', 'fish', 'species', 'information', 'meta', 'equipment' );
+		$uncountable = array( 'money', 'rice', 'series', 'fish', 'species', 'information', 'meta', 'equipment', 'maths', 'math' );
 
 		if( in_array( $result, $uncountable ) ) {
 			return $result;
