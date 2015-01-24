@@ -547,7 +547,7 @@
 
 		public function find( $pattern=null, $recursive=false ) {
 			if( ! $this->isFolder() ) {
-				return null;
+				return array();
 			}
 
 			// Default to a pattern for removing hidden files
@@ -587,7 +587,7 @@
 
 		public function children() {
 			if( ! $this->isFolder() ) {
-				return null;
+				return array();
 			}
 
 			return $this->find( null, false );
