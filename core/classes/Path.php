@@ -533,4 +533,64 @@
 			}
 		}
 
+//
+// Working with folder contents
+//
+
+	 /**
+	  * Get a list of Path objects contained within the reciever, whose names match the given pattern.
+	  *
+	  * @param string $pattern A regular expression, as accepted by `preg_match`, to match names against.
+	  * @param bool $recursive Flag indicating if the method should search within subdirectories (true) or not (false).
+	  * @return array A collection of paths that match the given pattern.
+	  */
+
+		public function find( $pattern=null, $recursive=false ) {
+			if( ! $this->isFolder() ) {
+				return null;
+			}
+
+			// Default to a pattern for removing hidden files
+			$pattern = empty( $pattern ) ? '/^[^\.]/' : $pattern;
+
+			// Get the contents of the path
+			$contents = array_diff( scandir( $this ), array( '.', '..' ) );
+
+			// Convert the items to paths
+			$children = array();
+			foreach( $contents as $i => $name ) {
+				$path = $this->pathByAddingComponent( $name );
+
+				// Add the path if it matches the pattern
+				if( preg_match( $pattern, $name ) ) {
+					$children[] = $path;
+				}
+
+				// If the new path is a folder, and we're getting children recursively
+				if( $recursive && $path->isFolder() ) {
+					$descendants = $path->find( $pattern, $recursive );
+					if( count( $descendants ) > 0 ) {
+						$children = array_merge( $children, $descendants );
+					}
+				}
+			}
+
+			// Return the array of paths
+			return $children;
+		}
+
+	 /**
+	  * Get a list of Path objects for the children of the reciever.
+	  *
+	  * @return array A collection of the folder's children.
+	  */
+
+		public function children() {
+			if( ! $this->isFolder() ) {
+				return null;
+			}
+
+			return $this->find( null, false );
+		}
+
 	}
