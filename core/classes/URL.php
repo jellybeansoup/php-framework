@@ -534,7 +534,12 @@
 	  */
 
 		public function setQueryValueForKey( $key, $value ) {
-			$this->query[$key] = $value;
+			if( $value === null ) {
+				$this->deleteQueryValueForKey( $key );
+			}
+			else {
+				$this->query[$key] = $value;
+			}
 		}
 
 	 /**
