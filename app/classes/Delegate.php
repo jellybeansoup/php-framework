@@ -143,7 +143,7 @@
 	  * routing a given URL to a non-matching controller or method.
 	  *
 	  * The default implementation will route the home page (no path components) to
-	  * `/maincontroller/index` and exceptions to `/maincontroller/exceptions`. All other
+	  * `/MainController/index` and exceptions to `/MainController/exceptions`. All other
 	  * `URL` objects are left as is.
 	  *
 	  * @param \Framework\Core\URL $url The `URL` to filter.
@@ -187,10 +187,13 @@
 	  *
 	  * @param \Framework\Core\URL $url The URL to generate content for.
 	  * @param array $attachments A collection of attachments to be passed to the controller's method.
+	  *   Must be an indexed array (any string keys will be stripped).
 	  * @return \Framework\App\Response The HTTP response generated for the given `URL`.
 	  */
 
 		public function responseForURL( \Framework\Core\URL $url, $attachments=array() ) {
+			// Attachments must be an index array
+			$attachments = array_values( $attachments );
 			// Add the URL as an attachment
 			array_unshift( $attachments, clone $url );
 			// Filter the URL
@@ -243,6 +246,8 @@
 			if( ! $controller->canRoute( $method ) ) {
 				throw new HTTPNotFoundException;
 			}
+			// Add any additional attachments
+			$attachments = array_merge( $attachments, $this->_attachments );
 			// Otherwise we're done here. BOOM.
 			$reponse = $controller->route( $method, $attachments );
 			// And return
@@ -287,6 +292,27 @@
 			}
 			// Return the response
 			return $response;
+		}
+
+	 /**
+	  * The name of the default controller class.
+	  *
+	  * Defaults to `MainController`, unless overridden by the application's delegate.
+	  *
+	  * @var string
+	  */
+
+		private $_attachments = array();
+
+	 /**
+	  * Attach a value to the response call.
+	  *
+	  * @param mixed $attachment The value to be sent to the responding method.
+	  * @return void
+	  */
+
+		protected final function attach( $attachment ) {
+			$this->_attachments[] = $attachment;
 		}
 
 //
