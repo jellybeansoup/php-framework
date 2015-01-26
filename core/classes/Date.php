@@ -117,6 +117,12 @@
 		private function difference( $seconds ) {
 			// Create an array for output
 		 	$since = array();
+			// Years
+			$years = (int)( $seconds / 31536000 );
+			if( $years >= 1 && count( $since ) < 2 ) :
+				$since[] = sprintf( '%s year%s', $years, ( $years != 1 ) ? 's' : false );
+				$seconds = (int)( $seconds - ( $years * 31536000 ) );
+			endif;
 			// Weeks
 			$weeks = (int)( $seconds / 604800 );
 			if( $weeks >= 1 && count( $since ) < 2 ) :
