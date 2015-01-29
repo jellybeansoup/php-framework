@@ -69,6 +69,26 @@
 		}
 
 	 /**
+	  * Determine if the date is in the future or not.
+	  *
+	  * @return bool Flag indicating if the date is in the future or not.
+	  */
+
+		public function isInTheFuture() {
+			return ( time() < $this->stamp );
+		}
+
+	 /**
+	  * Determine if the date is in the past or not.
+	  *
+	  * @return bool Flag indicating if the date is in the past or not.
+	  */
+
+		public function isInThePast() {
+			return ( time() > $this->stamp );
+		}
+
+	 /**
 	  * Fetch the amount of time since the object's date.
 	  * @return string The amount of time since the object's date.
 	  */
