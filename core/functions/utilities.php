@@ -67,3 +67,18 @@
 		}
 		return \Framework\Core\Path::create( $path );
 	}
+
+ /**
+  * Print given arguments in a HTML `pre` tag.
+  *
+  * @param mixed $var One or more values to be printed.
+  * @return \Framework\Core\Path The path created using the given relative path.
+  */
+
+	function dump() {
+		if( count( $args = func_get_args() ) ) {
+			echo '<pre>';
+			call_user_func_array( 'var_dump', $args );
+			echo '</pre>';
+		}
+	}
