@@ -129,7 +129,15 @@
 				}
 			}
 			// Scheme
-			$this->scheme = isset( $segments['scheme'] ) ? $segments['scheme'] : 'http';
+			if( isset( $segments['scheme'] ) ) {
+				$this->scheme = $segments['scheme'];
+			}
+			else if( isset( $_SERVER['HTTP_HTTPS'] ) && $_SERVER['HTTP_HTTPS'] === '1' ) {
+				$this->scheme = 'https';
+			}
+			else {
+				$this->scheme = 'http';
+			}
 			// Host
 			if( isset( $segments['host'] ) ) {
 				$this->host = $segments['host'];
@@ -398,7 +406,7 @@
 				}
 				// Port
 				$port = null;
-				if( $this->port && $this->port != 80 ) {
+				if( $this->port && ( ( $this->scheme == 'http' && $this->port != 80 ) || ( $this->scheme == 'https' && $this->port != 443 ) ) ) {
 					$port = ':'.$this->port;
 				}
 				// Combine the elements!
