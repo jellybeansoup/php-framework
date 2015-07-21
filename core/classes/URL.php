@@ -132,7 +132,7 @@
 			if( isset( $segments['scheme'] ) ) {
 				$this->scheme = $segments['scheme'];
 			}
-			else if( isset( $_SERVER['HTTP_HTTPS'] ) && $_SERVER['HTTP_HTTPS'] === '1' ) {
+			else if( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' ) {
 				$this->scheme = 'https';
 			}
 			else {
