@@ -137,6 +137,22 @@
 			$this->response()->clearHeader( $key );
 		}
 
+	 /**
+	  * Shorthand function for redirecting to a given URL.
+	  *
+	  * Acts as an alias for `$this->response()->setHeader( 'Location', $location )`, and causes the headers to be sent.
+	  *
+	  * @see Framework\App\Response::setHeader()
+	  * @param \Framework\Core\URL $location The URL you want to redirect to.
+	  * @return void
+	  */
+
+		public final function redirect( \Framework\Core\URL $location ) {
+			$this->response()->setHeader( 'Location', (string) $location );
+			$this->response()->body = null;
+			$this->response()->send();
+		}
+
 //
 // Routing the method call
 //
