@@ -36,6 +36,30 @@
 //
 
 	 /**
+	  * Generate an error message.
+	  *
+	  * @param integer $http_error The HTTP error code.
+	  * @param string $message The custom error message to display.
+	  * @return array
+	  */
+
+		public function error( $http_error, $message=null ) {
+			$this->status = $http_error;
+			$body = array(
+				'code' => $http_error,
+				'error' => http_translate_code( $http_error ),
+			);
+			if( $message != null ) {
+				$body['message'] = $message;
+			}
+			return $body;
+		}
+
+//
+// Response format
+//
+
+	 /**
 	  * The format of the response.
 	  *
 	  * @internal
