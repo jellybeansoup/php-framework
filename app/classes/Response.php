@@ -146,6 +146,10 @@
 	  */
 
 		public function sendHeaders() {
+			// Headers already sent
+			if( headers_sent( $file, $line ) ) {
+				return;
+			}
 			// Iterate through
 			foreach( $this->headers as $key => $value ) {
 				if( is_string( $key ) ) {
@@ -249,7 +253,7 @@
 
 		public function setBody( $body ) {
 			// Check the given parameters
-			if( ! ( is_scalar( $body ) || ( is_object( $body ) && method_exists( $body, '__toString' ) ) ) ) {
+			if( ! ( is_null( $body ) || is_scalar( $body ) || ( is_object( $body ) && method_exists( $body, '__toString' ) ) ) ) {
 				throw new \InvalidArgumentException( 'The response body is expected to be a scalar value.' );
 			}
 			// Store the code value
