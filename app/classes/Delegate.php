@@ -197,7 +197,7 @@
 			// Add the URL as an attachment
 			array_unshift( $attachments, clone $url );
 			// Filter the URL
-			$filteredURL = $this->filterURL( $url );
+			$filteredURL = $this->filterURL( clone $url );
 			$filteredPath = $filteredURL->path->pathByDeletingExtension;
 			// Find the controller for the first URI component
 			if( ( $first = $filteredPath->componentAtIndex( 0 ) ) === null ) {
@@ -249,7 +249,7 @@
 			// Add any additional attachments
 			$attachments = array_merge( $attachments, $this->_attachments );
 			// Otherwise we're done here. BOOM.
-			$reponse = $controller->route( $method, $attachments );
+			$reponse = $controller->route( $method, $url, $attachments );
 			// And return
 			return $reponse;
 		}

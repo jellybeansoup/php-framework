@@ -188,13 +188,17 @@
 	  *   as the body, or null if the routing fails.
 	  */
 
-		public function route( $methodName, $attachments ) {
+		public function route( $methodName, \Framework\Core\URL $url, $attachments ) {
 			// Gather our prefixes
 			foreach( $this->_methodPrefixes() as $prefix ) {
 				// Prefix the given name
 				$prefixedMethodName = strtolower( $prefix ).ucfirst( $methodName );
 				// If a matching public method exists, make the call.
 				if( $this->hasPublicMethod( $prefixedMethodName ) ) {
+					// Indicate that we will route the call
+					if( $this->hasMethod( 'willHandleURL' )  ) {
+						$this->callMethod( 'willHandleURL', array( $url, $prefixedMethodName ) );
+					}
 					// The response body is the return value of the called method.
 					$body = $this->callMethod( $prefixedMethodName, $attachments );
 					// Grab a copy of the response object
@@ -203,6 +207,10 @@
 					$response->body = $this->formatBody( $body, $attachments );
 					// Clear the stored response object.
 					unset( $this->_response );
+					// Indicate that we have handled the call
+					if( $this->hasMethod( 'didHandleURL' )  ) {
+						$this->callMethod( 'didHandleURL', array( $url, $prefixedMethodName, $response ) );
+					}
 					// Return the response object.
 					return $response;
 				}
