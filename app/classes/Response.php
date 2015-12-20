@@ -172,10 +172,13 @@
 		public function setHeader( $key, $value ) {
 			// Check the given parameters
 			if( ! is_string( $key ) || $key === null ) {
-				throw new \InvalidArgumentException( 'Header key is expected to be a string.' );
+				throw new \InvalidArgumentException( 'Header key is expected to be a string, received `'.gettype($value).'` instead.' );
 			}
-			if( ! ( is_scalar( $value ) || ( is_object( $value ) && method_exists( $value, '__toString' ) ) ) || $value === null ) {
-				throw new \InvalidArgumentException( 'Header value is expected to be a scalar value.' );
+			if( $value === null ) {
+				throw new \InvalidArgumentException( 'Header value cannot be null.' );
+			}
+			if( ! ( is_scalar( $value ) || ( is_object( $value ) && method_exists( $value, '__toString' ) ) ) ) {
+				throw new \InvalidArgumentException( 'Header value is expected to be a scalar value, received `'.gettype($value).'` instead.' );
 			}
 			// Store the header value
 			$this->_headers[$key] = strval( $value );
