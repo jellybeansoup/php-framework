@@ -117,12 +117,12 @@
 			// Divide up the namespace
 			$segments = explode( '\\', trim( $namespace, "\\ \t\n\r\0\x0B" ) );
 			// Framework libraries
-			if( count( $segments ) === 2 && $segments[0] === 'Framework' ) {
+			if( count( $segments ) === 2 && strtolower( $segments[0] ) === 'framework' ) {
 				$segments[0] = dirname(__FILE__);
 				$segments[1] = strtolower( $segments[1] );
 			}
 			// Site libraries
-			else if( count( $segments ) === 2 && $segments[0] === 'Site' ) {
+			else if( count( $segments ) === 2 && strtolower( $segments[0] ) === 'site' ) {
 				$segments[0] = 'sites';
 				$segments[1] = strtolower( $segments[1] );
 			}
@@ -185,15 +185,10 @@
 			}
 			// Divide up the namespace
 			$segments = explode( '\\', trim( $class, "\\ \t\n\r\0\x0B" ) );
-			// General libraries
-			if( count( $segments ) === 2 ) {
-				$namespace = array_slice( $segments, 0, 1 );
-				return self::forNamespace( implode( '\\', $namespace ) );
-			}
-			// Framework libraries
-			else if( count( $segments ) === 3 ) {
-				$namespace = array_slice( $segments, 0, 2 );
-				return self::forNamespace( implode( '\\', $namespace ) );
+			$namespace = implode( '\\', array_slice( $segments, 0, -1 ) );
+			// Load the appropriate library
+			if( ( $library = self::forNamespace( $namespace ) ) ) {
+				return $library;
 			}
 			// Invalid library namespace
 			else {
