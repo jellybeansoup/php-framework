@@ -175,7 +175,8 @@
 			// Create the method name
 			$methodName = sprintf( 'set%s', ucfirst( $propertyName ) );
 			// If the property exists...
-			if( $this->hasProperty( $propertyName ) && $this->hasMethod( $methodName ) ) {
+			$reflect = $this->_reflection();
+			if( $reflect->hasMethod( $methodName ) && $reflect->getMethod( $methodName )->getNumberOfRequiredParameters() === 1 ) {
 				return $methodName;
 			}
 			// Fetch the current class
@@ -559,7 +560,7 @@
 	  */
 
 		public final function __toString() {
-			return $this->asString();
+			return @strval( $this->asString() );
 		}
 
 	 /**

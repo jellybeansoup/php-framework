@@ -43,15 +43,7 @@
 	  */
 
 		protected static $_dynamicProperties = array(
-			'absolutePath',
 			'root',
-			'lastComponent',
-			'pathByDeletingLastComponent',
-			'components',
-			'filename',
-			'extension',
-			'pathByDeletingExtension',
-			'trimmed',
 			'contents',
 		);
 
@@ -65,7 +57,7 @@
 	  * @return void
 	  */
 
-		public function __construct( $path ) {
+		public function __construct( $path='' ) {
 			// Capture the file the path was created in if the path is relative
 			if( ! ( $startsWithSlash = preg_match( '/^\s*\//i', $path ) ) ) {
 				$backtrace = debug_backtrace();
@@ -79,8 +71,7 @@
 			// Clean the path
 			$cleanPath = trim( $path, "/ \t\n\r\0\x0B" );
 			$cleanPath = preg_replace( '/[\/]+/', '/', $cleanPath );
-			$cleanPath = $startsWithSlash ? '/'.$cleanPath : $cleanPath;
-			$this->_path = $cleanPath ? $cleanPath : '/';
+			$this->_path = strlen( $cleanPath ) !== 0 ? $cleanPath : null;
 		}
 
 	 /**
@@ -90,7 +81,10 @@
 	  */
 
 		public function asString() {
-			return $this->_path;
+			if( $this->_root === null ) {
+				return strval( preg_replace( '/\/{2,}/', '/', DIRECTORY_SEPARATOR.$this->_path ) );
+			}
+			return strval( $this->_path );
 		}
 
 	 /**
@@ -126,13 +120,23 @@
 //
 
 	 /**
-	  * The last component of the path
 	  *
-	  * @return string The segment following the final backslash in the path
+	  *
+	  * @return string
+	  */
+
+		public function absoluteString() {
+			return preg_replace( '/\/{2,}/', '/', $this->_root.DIRECTORY_SEPARATOR.$this->_path );
+		}
+
+	 /**
+	  *
+	  *
+	  * @return Path
 	  */
 
 		public function absolutePath() {
-			return $this->root()->pathByAddingComponent( $this->_path );
+			return new Path( $this->absoluteString() );
 		}
 
 	 /**
@@ -324,7 +328,9 @@
 	  */
 
 		public function isSubpathOf( Path $path ) {
-			return ( strpos( $this->_path, (string) $path ) === 0 );
+			$this_path = $this->absoluteString();
+			$new_path = $path->absoluteString();
+			return @strpos( $this_path, $new_path ) === 0;
 		}
 
 	 /**
@@ -334,33 +340,39 @@
 
 		public function relativeTo( Path $relativeTo ) {
 			// Get the path strings
-			$path = $this->_path;
-			$relativeTo = $relativeTo->_path;
+			$path = $this->absoluteString();
+			$relativePath = $relativeTo->absoluteString();
 			// Super simple: $relativeTo equals $path
-			if( $path === $relativeTo ) {
-				return $this;
+			if( $path === $relativePath ) {
+				$path = new Path( '' );
+				$path->_root = $relativeTo->absoluteString();
+				return $path;
 			}
 			// Simple: $relativeTo is in $path
-			if( strpos( $path, $relativeTo ) === 0 ) {
-				return new Path( substr( $path, strlen( $relativeTo ) ) );
+			if( strpos( $path, $relativePath ) === 0 ) {
+				$path = new Path( substr( $path, strlen( $relativePath ) ) );
+				$path->_root = $relativeTo->absoluteString();
+				return $path;
 			}
 			// More difficult: $relativeTo is outside of $path
-			$relative  = array();
+			$relativeArray = array();
 			$pathParts = explode( DIRECTORY_SEPARATOR, $path );
-			$relativeToParts = explode( '/', $relativeTo );
-			foreach( $relativeToParts as $index => $part ) {
+			$relativeParts = explode( '/', $relativePath );
+			foreach( $relativeParts as $index => $part ) {
 				if( isset( $pathParts[$index] ) && $pathParts[$index] == $part ) {
 					continue;
 				}
-				$relative[] = '..';
+				$relativeArray[] = '..';
 			}
 			foreach( $pathParts as $index => $part ) {
-				if( isset( $relativeToParts[$index] ) && $relativeToParts[$index] == $part ) {
+				if( isset( $relativeParts[$index] ) && $relativeParts[$index] == $part ) {
 					continue;
 				}
-				$relative[] = $part;
+				$relativeArray[] = $part;
 			}
-			return new Path( implode( DIRECTORY_SEPARATOR, $relative ) );
+			$path = new Path( implode( DIRECTORY_SEPARATOR, $relativeArray ) );
+			$path->_root = $relativeTo->absoluteString();
+			return $path;
 		}
 
 //
@@ -373,7 +385,7 @@
 	  */
 
 		public function size() {
-			$size = filesize( $this->absolutePath() );
+			$size = filesize( $this->absoluteString() );
 	        if( $size < 0 ) {
 	            $size += 2.0 * ( PHP_INT_MAX + 1 );
 	        }
@@ -386,7 +398,7 @@
 	  */
 
 		public function exists() {
-			return file_exists( $this->absolutePath() );
+			return file_exists( $this->absoluteString() );
 		}
 
 	 /**
@@ -395,7 +407,7 @@
 	  */
 
 		public function isFile() {
-			return is_file( $this->absolutePath() );
+			return is_file( $this->absoluteString() );
 		}
 
 	 /**
@@ -404,7 +416,7 @@
 	  */
 
 		public function isFolder() {
-			return is_dir( $this->absolutePath() );
+			return is_dir( $this->absoluteString() );
 		}
 
 	 /**
@@ -417,7 +429,7 @@
 	  */
 
 		public function contents( $parameters=false ) {
-			if( is_file( $absolutePath = $this->absolutePath() ) ) {
+			if( is_file( $absolutePath = $this->absoluteString() ) ) {
 				// Get the pure contents of the file
 				if( $parameters === false ) {
 					return file_get_contents( $absolutePath );
@@ -447,7 +459,7 @@
 			if( ! is_dir( $destinationFolder ) ) {
 				mkdir( $destinationFolder, 0777, true );
 			}
-			return file_put_contents( $this->absolutePath(), $value, ( $append ) ? FILE_APPEND : 0 );
+			return file_put_contents( $this->absoluteString(), $value, ( $append ) ? FILE_APPEND : 0 );
 		}
 
 	 /**
@@ -456,7 +468,7 @@
 	  */
 
 		public function inc( $once=true ) {
-			if( is_file( $absolutePath = $this->absolutePath() ) ) {
+			if( is_file( $absolutePath = $this->absoluteString() ) ) {
 				return ( $once === true ) ? include_once $absolutePath : include $absolutePath;
 			}
 			return null;
@@ -468,7 +480,7 @@
 	  */
 
 		public function req( $once=true ) {
-			if( is_file( $absolutePath = $this->absolutePath() ) ) {
+			if( is_file( $absolutePath = $this->absoluteString() ) ) {
 				return ( $once === true ) ? require_once $absolutePath : require $absolutePath;
 			}
 			return null;
@@ -484,7 +496,7 @@
 			if( ! is_dir( $destinationFolder ) ) {
 				mkdir( $destinationFolder, 0777, true );
 			}
-			return rename( $this->absolutePath(), $path->absolutePath() );
+			return rename( $this->absoluteString(), $path->absoluteString() );
 		}
 
 	 /**
@@ -497,7 +509,7 @@
 			if( ! is_dir( $destinationFolder ) ) {
 				mkdir( $destinationFolder, 0777, true );
 			}
-			return copy( $this->absolutePath(), $path->absolutePath() );
+			return copy( $this->absoluteString(), $path->absoluteString() );
 		}
 
 	 /**
@@ -521,7 +533,7 @@
 	  */
 
 		public function delete() {
-			$absolute_path = $this->absolutePath();
+			$absolute_path = $this->absoluteString();
 			if( ! file_exists( $absolute_path ) ) {
 				return false;
 			}
@@ -554,7 +566,7 @@
 			$pattern = empty( $pattern ) ? '/^[^\.]/' : $pattern;
 
 			// Get the contents of the path
-			$contents = array_diff( scandir( $this ), array( '.', '..' ) );
+			$contents = array_diff( scandir( $this->absoluteString() ), array( '.', '..' ) );
 
 			// Convert the items to paths
 			$children = array();

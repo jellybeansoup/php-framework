@@ -201,14 +201,14 @@
 			$filteredPath = $filteredURL->path->pathByDeletingExtension;
 			// Find the controller for the first URI component
 			if( ( $first = $filteredPath->componentAtIndex( 0 ) ) === null ) {
-				throw new HTTPNotFoundException;
+				throw new HTTPNotFoundException( "Could not parse filtered URI: {$filteredPath}." );
 			}
 			// Get the controllers
 			$controllers = $this->controllers();
 			// Loop through the components
 			$className = null;
 			$index = 0;
-			foreach( $filteredPath->components as $component ) {
+			foreach( $filteredPath->components() as $component ) {
 				// Build a class name
 				$className = $className !== null ? $className.'\\'.$component : $component;
 				// Find a metching controller
@@ -219,12 +219,13 @@
 						continue;
 					}
 					// Load the file while we're here
-					require_once( $path );
+					$path->req( true );
 					// Get the controller class name
 					$className = self::classNamespace().'\\'.$name;
 					// Load the controller instance if we can
 					if( is_subclass_of( $className, 'Framework\\App\\Controller' ) ) {
 						$controller = $className::instance();
+						break;
 					}
 				}
 				// Iterate the index
@@ -236,7 +237,7 @@
 			}
 			// If we have no controller, throw an exception
 			if( $controller === null ) {
-				throw new HTTPNotFoundException;
+				throw new HTTPNotFoundException( "No controller found for `{$filteredPath}`." );
 			}
 			// Find the method for the second URI component
 			if( ( $method = $filteredPath->componentAtIndex( $index ) ) === null ) {
@@ -244,7 +245,7 @@
 			}
 			// If we can't route the method, throw an exception
 			if( ! $controller->canRoute( $method ) ) {
-				throw new HTTPNotFoundException;
+				throw new HTTPNotFoundException( "Could not route method `{$method}`." );
 			}
 			// Add any additional attachments
 			$attachments = array_merge( $attachments, $this->_attachments );
@@ -336,29 +337,28 @@
 	  */
 
 		private final function controllers() {
-			// Collections
-			$folders = array( '/controllers' );
-			$controllers = array();
-			// Go through the folders we have to find all the files
 			$library = $this->library();
 			$library_path = path( $library->path );
-			for( $i=0; $i<count($folders); $i++ ) {
-				$pattern = $folders[$i].'/*';
-				// Get all the children of the folder
-				$children = $library->glob( $pattern );
-				foreach( $children as $child ) {
-					$child_path = path( $child );
-					$relative_path = $child_path->relativeTo( $library_path );
-					if( $child_path->isFolder() ) {
-						$folders[] = $relative_path;
-					}
-					else if( $child_path->isFile() && $child_path->extension() === 'php' ) {
-						$key = str_replace( '/', '\\', $relative_path->pathByDeletingComponent( 1 )->pathByDeletingExtension() );
-						$controllers[$key] = $child;
-					}
-				}
+			$controllers_path = $library_path->pathByAddingComponent('controllers');
+
+			if( ! $controllers_path->isFolder() ) {
+				return array();
 			}
-			// Return the controllers
+
+			$children = $controllers_path->find( '/\.php$/imXx', true );
+
+			$controllers = array();
+			foreach( $children as $child ) {
+
+				$relative_path = $child->relativeTo( $library_path );
+
+				if( $relative_path->isFile() && $relative_path->extension() === 'php' ) {
+					$key = str_replace( '/', '\\', $relative_path->pathByDeletingComponent( 1 )->pathByDeletingExtension() );
+					$controllers[$key] = $relative_path;
+				}
+
+			}
+
 			return $controllers;
 		}
 
@@ -451,8 +451,8 @@
 	  * @return self
 	  */
 
-		public function __construct() {
-			parent::__construct( 404 );
+		public function __construct( $reason=null ) {
+			parent::__construct( 404, $reason );
 		}
 
 	}

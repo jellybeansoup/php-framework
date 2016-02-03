@@ -60,7 +60,7 @@
 				throw new \InvalidArgumentException( 'Path is expected to be a string.' );
 			}
 			// Check that the library exists
-			if( ! file_exists( $path ) || ! is_dir( $path ) ) {
+			if( ! file_exists( $path ) || ! is_dir( $path ) || ! file_exists( $path.'/classes' ) || ! is_dir( $path.'/classes' ) ) {
 				throw new \InvalidLibraryException( 'Library does not exist at '.$path.'.' );
 			}
 			// Store the path
@@ -88,7 +88,7 @@
 				throw new \InvalidArgumentException( 'Path is expected to be a string.' );
 			}
 			// Check that the library exists
-			if( ! file_exists( $path ) || ! is_dir( $path ) ) {
+			if( ! file_exists( $path ) || ! is_dir( $path ) || ! file_exists( $path.'/classes' ) || ! is_dir( $path.'/classes' ) ) {
 				throw new \InvalidLibraryException( 'Library does not exist at '.$path.'.' );
 			}
 			// Determine the real path
@@ -146,7 +146,7 @@
 				throw new \Exception( 'Library `'.$segments[0].'` does not exist.' );
 			}
 			// Fetch and return the library
-			return new self( $path, $namespace );
+			return self::load( $path, $namespace );
 		}
 
 	 /**
@@ -169,7 +169,7 @@
 				}
 			}
 			// Return the results of class_exists
-			return ( class_exists( $class, false ) || interface_exists( $class, false ) );
+			return ( class_exists( $class, false ) || interface_exists( $class, false ) || trait_exists( $class, false ) );
 		}
 
 	 /**

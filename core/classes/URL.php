@@ -111,6 +111,7 @@
 	  */
 
 		public function __construct( $string=null ) {
+			$segments = array();
 			// Handling a URL
 			if( $string !== null ) {
 				// Trim that string!
@@ -191,10 +192,13 @@
 				if( ( $pos = strpos( $pathinfo, '?' ) ) !== false ) {
 					$pathinfo = substr( $pathinfo, 0, $pos );
 				}
-				if( strlen( $this->rootPath->trimmed ) > 0 && strpos( $pathinfo, strval( $this->rootPath->trimmed ) ) === 1 ) {
-					$pathinfo = substr( $pathinfo, strlen( $this->rootPath ) );
+				$path = new Path( $pathinfo );
+				if( $path->isSubpathOf( $this->rootPath ) ) {
+					$relativePath = $path->relativeTo( $this->rootPath );
+					$path = new Path( $relativePath->path );
+					$path->root = null;
 				}
-				$this->path = new Path( $pathinfo );
+				$this->path = $path;
 			}
 			elseif( $this->path === '/' ) {
 				$this->path = null;
@@ -292,8 +296,9 @@
 				$fragment = '#'.$this->fragment;
 			}
 			// Path should either exist or not
-			if( ( $path = $this->fullPath() ) == '/' )
+			if( ( $path = $this->fullPath()->absoluteString() ) == '/' ) {
 				$path = '';
+			}
 			// Build a string
 			return $this->serverString().$path.$query.$fragment;
 		}
@@ -303,7 +308,7 @@
 	  */
 
 		public function baseString() {
-			return $this->serverString().$this->rootPath;
+			return $this->serverString().DIRECTORY_SEPARATOR.$this->rootPath;
 		}
 
 	 /**
@@ -311,7 +316,9 @@
 	  */
 
 		public function extendedPath() {
-			return new Path( $this->host.$this->rootPath.$this->path );
+			$path = new Path( $this->host.DIRECTORY_SEPARATOR.$this->rootPath.DIRECTORY_SEPARATOR.$this->path );
+			$path->root = null;
+			return $path;
 		}
 
 	 /**
@@ -319,7 +326,9 @@
 	  */
 
 		public function fullPath() {
-			return new Path( $this->rootPath.$this->path );
+			$path = new Path( $this->rootPath.DIRECTORY_SEPARATOR.$this->path );
+			$path->root = null;
+			return $path;
 		}
 
 	 /**

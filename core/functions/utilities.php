@@ -56,14 +56,8 @@
 
 	function path( $path=null ) {
 		// Capture the file the path was created in if the path is relative
-		if( ! ( $startsWithSlash = preg_match( '/^\s*\//i', $path ) ) ) {
-			$backtrace = debug_backtrace();
-			foreach( $backtrace as $call ) {
-				if( isset( $call['file'] ) && $call['file'] !== __FILE__ ) {
-					$path = dirname( $call['file'] ).DIRECTORY_SEPARATOR.$path;
-					break;
-				}
-			}
+		if( ! ( $startsWithSlash = preg_match( '/^\s*\//i', $path ) ) && ( $calling_path = calling_file() ) !== null ) {
+			$path = dirname( $calling_path ).DIRECTORY_SEPARATOR.$path;
 		}
 		return \Framework\Core\Path::create( $path );
 	}
@@ -81,4 +75,76 @@
 			call_user_func_array( 'var_dump', $args );
 			echo '</pre>';
 		}
+	}
+
+ /**
+  *
+  * @return \Framework\Core\Path The path created using the given relative path.
+  */
+
+	function calling_file() {
+		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
+		$offset = 1;
+
+		$call = $backtrace[$offset];
+		if( isset( $call['function'] ) && substr( $call['function'], 0, 6 ) === '__call' ) {
+			$offset += 1;
+		}
+
+		$call = $backtrace[$offset];
+		return isset( $call['file'] ) ? $call['file'] : null;
+	}
+
+ /**
+  *
+  * @return \Framework\Core\Path The path created using the given relative path.
+  */
+
+	function calling_class() {
+		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
+		$offset = 1;
+
+		$call = $backtrace[$offset];
+		if( isset( $call['function'] ) && substr( $call['function'], 0, 6 ) === '__call' ) {
+			$offset += 1;
+		}
+
+		// We skip an entry to get the calling class
+		$offset += 1;
+
+		$call = $backtrace[$offset];
+
+		if( isset( $call['class'] ) ) {
+			return $call['class'];
+		}
+		else return null;
+	}
+
+ /**
+  *
+  * @return \Framework\Core\Path The path created using the given relative path.
+  */
+
+	function calling_function() {
+		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 10 );
+		$offset = 1;
+
+		$call = $backtrace[$offset];
+		if( isset( $call['function'] ) && substr( $call['function'], 0, 6 ) === '__call' ) {
+			$offset += 1;
+		}
+
+		// We skip an entry to get the calling class
+		$offset += 1;
+
+		$call = $backtrace[$offset];
+
+		if( isset( $call['class'] ) && isset( $call['function'] ) ) {
+			$type = ! empty( $call['type'] ) ? $call['type'] : '::';
+			return $call['class'].$type.$call['function'].'()';
+		}
+		else if( isset( $call['function'] ) ) {
+			return $call['function'].'()';
+		}
+		else return null;
 	}
