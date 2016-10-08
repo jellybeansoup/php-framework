@@ -194,8 +194,7 @@
 				}
 				$path = new Path( $pathinfo );
 				if( $path->isSubpathOf( $this->rootPath ) ) {
-					$relativePath = $path->relativeTo( $this->rootPath );
-					$path = new Path( $relativePath->path );
+					$path = $path->relativeTo( $this->rootPath );
 					$path->root = null;
 				}
 				$this->path = $path;
