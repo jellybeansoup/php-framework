@@ -210,7 +210,7 @@
 			if( isset( $segments['query'] ) ) {
 				parse_str( $segments['query'], $this->query );
 			}
-			elseif( ! isset( $segments ) && isset( $_SERVER['QUERY_STRING'] ) && strlen( $_SERVER['QUERY_STRING'] ) > 0 ) {
+			elseif( $string === null && isset( $_SERVER['QUERY_STRING'] ) && strlen( $_SERVER['QUERY_STRING'] ) > 0 ) {
 				parse_str( $_SERVER['QUERY_STRING'], $this->query );
 			}
 		}
