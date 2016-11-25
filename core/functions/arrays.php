@@ -70,7 +70,7 @@
 		while( ( $key = array_search( $value, $array ) ) !== false ) {
 			unset( $array[$key] );
 		}
-		if( $ignoreKeys === true && ! self::isAssociative( $array ) ) {
+		if( $ignoreKeys === true && ! is_assoc( $array ) ) {
 			$array = array_values( $array );
 		}
 		// Return the modified array
