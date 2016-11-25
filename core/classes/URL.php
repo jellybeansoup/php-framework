@@ -152,7 +152,7 @@
 				else {
 					$server_root = trim_slashes( $_SERVER['DOCUMENT_ROOT'] );
 					$site_root = trim_slashes( document_root() );
-					$this->rootPath = substr( $site_root, strlen( $server_root ) );
+					$this->rootPath = ( $site_root !== $server_root ) ? substr( $site_root, strlen( $server_root ) ) : null;
 				}
 			}
 			// Port
