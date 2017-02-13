@@ -86,9 +86,49 @@
 	  */
 
 		protected static function defaultOptions() {
-			return array(
+			$defaults = [
 				'url' => \Framework\Core\URL::create(),
-			);
+			];
+
+			if(php_sapi_name() == "cli") {
+				global $argv;
+				
+				$args = $argv;
+				$script = array_shift($args);
+
+				$path = (count($args) > 0 && substr($args[0], 0, 1) !== "-") ? array_shift($args) : "";
+				$url = \Framework\Core\URL::create("cli:/{$path}");
+
+				$i = 0;
+				while($i < count($args)) {
+					$current = $args[$i];
+					$next = count($args) > $i+1 ? $args[$i+1] : null;
+
+					if(substr($current, 0, 1) !== "-") {
+						continue;
+					}
+					
+					if(($pos = strpos($current, "=")) !== false ) {
+						$key = trim(substr($current, 0, $pos), "-");
+						$url->setQueryValueForKey($key, substr($current, $pos+1));
+						$i += 1;
+					}
+					else if(substr($next, 0, 1) !== "-") {
+						$key = trim($current, "-");
+						$url->setQueryValueForKey($key, $next);
+						$i += 2;
+					}
+					else {
+						$key = trim($current, "-");
+						$url->setQueryValueForKey($key, true);
+						$i += 1;
+					}
+				}
+
+				$defaults['url'] = $url;
+			}
+
+			return $defaults;
 		}
 
 	 /**
