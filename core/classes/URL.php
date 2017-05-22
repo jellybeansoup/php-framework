@@ -130,10 +130,12 @@
 				}
 			}
 			// Scheme
+			$server_scheme = false;
 			if( isset( $segments['scheme'] ) ) {
 				$this->scheme = $segments['scheme'];
 			}
 			else if( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' ) {
+				$server_scheme = true;
 				$this->scheme = 'https';
 			}
 			else {
@@ -159,7 +161,7 @@
 			if( isset( $segments['port'] ) ) {
 				$this->port = $segments['port'];
 			}
-			elseif( isset( $_SERVER['SERVER_PORT'] ) ) {
+			elseif( $server_scheme && isset( $_SERVER['SERVER_PORT'] ) ) {
 				$this->port = $_SERVER['SERVER_PORT'];
 			}
 			// Basic Authentication
