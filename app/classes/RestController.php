@@ -100,8 +100,13 @@
 			if( in_array( $url->scheme, array( 'http', 'https', 'exception' ) ) ) {
 				// Get the content format
 				$format = $url->path->extension ? $url->path->extension : $this->format;
+				// TXT response
+				if( $format === 'txt' ) {
+					$this->setHeader( 'Content-type', 'text/plain' );
+					return $body;
+				}
 				// JSON response
-				if( $format === 'json' ) {
+				else if( $format === 'json' ) {
 					$this->setHeader( 'Content-type', 'application/json' );
 					return self::json_encode( self::primitiveOf( $body ) );
 				}
