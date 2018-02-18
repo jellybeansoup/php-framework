@@ -384,6 +384,21 @@
 	  * @return string
 	  */
 
+		public function standardized() {
+			$realpath = realpath($this->absoluteString());
+			
+			if( $realpath === false ) {
+				return null;
+			}
+
+	        return new Path($realpath);
+		}
+
+	 /**
+	  *
+	  * @return string
+	  */
+
 		public function size() {
 			$size = filesize( $this->absoluteString() );
 	        if( $size < 0 ) {
