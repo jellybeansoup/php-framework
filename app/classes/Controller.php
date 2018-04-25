@@ -49,7 +49,9 @@
 	  * @return self
 	  */
 
-		private final function __construct() {}
+		private final function __construct() {
+			$this->initialize();
+		}
 
 	 /**
 	  * Fetch an instance of the calling controller class.
@@ -65,6 +67,15 @@
 			// Return a new instance instance
 			return new $class;
 		}
+
+	 /**
+	  * Called when an instance of the class is initialized, to allow properties
+	  * to be initialized as required.
+	  *
+	  * @return void
+	  */
+
+		public function initialize() { }
 
 //
 // Handling the response
