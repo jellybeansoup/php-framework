@@ -10,7 +10,17 @@
   */
 
 	class Request extends \Framework\Core\Object {
+		
+	 /**
+	  * Fetch the request's body as a string
+	  *
+	  * @return
+	  */
 
+		public static function body() {
+		    return file_get_contents('php://input');
+		}
+		
 	 /**
 	  * Fetch the request's SERVER variables
 	  *
