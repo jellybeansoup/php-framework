@@ -16,12 +16,12 @@
   * Class Manager
   */
 
-	class Image extends Object {
+	class Image extends Base {
 
 	 /**
 	  * Dynamic properties
 	  *
-	  * @see Framework\Core\Object::$_dynamicProperties
+	  * @see Framework\Core\Base::$_dynamicProperties
 	  * @var array
 	  */
 

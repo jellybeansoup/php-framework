@@ -14,7 +14,7 @@
   * Arr
   */
 
-	class Date extends Object {
+	class Date extends Base {
 
 	 /**
 	  * The timestamp representing the date.

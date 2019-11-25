@@ -17,12 +17,12 @@
   * @license FreeBSD
   */
 
-	abstract class Controller extends \Framework\Core\Object {
+	abstract class Controller extends \Framework\Core\Base {
 
 	 /**
 	  * Dynamic properties
 	  *
-	  * @see Framework\Core\Object::$_dynamicProperties
+	  * @see Framework\Core\Base::$_dynamicProperties
 	  * @var array
 	  */
 

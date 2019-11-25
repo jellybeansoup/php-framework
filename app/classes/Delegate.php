@@ -23,7 +23,7 @@
   * @license FreeBSD
   */
 
-	abstract class Delegate extends \Framework\Core\Object {
+	abstract class Delegate extends \Framework\Core\Base {
 
 //
 // Singleton

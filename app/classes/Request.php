@@ -9,7 +9,7 @@
   * Representation of a HTTP request.
   */
 
-	class Request extends \Framework\Core\Object {
+	class Request extends \Framework\Core\Base {
 		
 	 /**
 	  * Fetch the request's body as a string

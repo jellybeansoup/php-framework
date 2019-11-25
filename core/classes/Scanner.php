@@ -15,7 +15,7 @@
   * Can be used for scanning and parsing strings quickly.
   */
 
-	class Scanner extends Object {
+	class Scanner extends Base {
 
 //
 // Properties

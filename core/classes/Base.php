@@ -25,7 +25,7 @@
   * @license FreeBSD
   */
 
-	abstract class Object {
+	abstract class Base {
 
 //
 // Dynamic properties
@@ -97,12 +97,12 @@
 	  * Determine the name of the getter method for a dynamic property using the property's name.
 	  *
 	  * * If a method exists with the given name, the given name is used (regardless of whether a property exists).
-	  * * If a dynamic property has been defined in `Framework\Core\Object::$_dynamicProperties` with the given name and
+	  * * If a dynamic property has been defined in `Framework\Core\Base::$_dynamicProperties` with the given name and
 	  * 	a method has been defined with the `get` key, use the value of this element. Otherwise, if the dynamic
 	  *		property is defined, and a method exists with the same name, the defined name is used instead.
 	  *
 	  *	@internal
-	  * @used-by Framework\Core\Object::__get()
+	  * @used-by Framework\Core\Base::__get()
 	  * @param string $propertyName The name of the property to determine the get method name for.
 	  * @return string|bool The name of the method for fetching the property value. False if no method can be determined.
 	  */
@@ -160,13 +160,13 @@
 	  * performing any of the following logic, i.e. `example_property` would become `setExample_property`.
 	  *
 	  * * If a method and defined property exist with the prefixed name, the prefixed name is used.
-	  * * If a dynamic property has been defined in `Framework\Core\Object::$_dynamicProperties` with the un-prefixed
+	  * * If a dynamic property has been defined in `Framework\Core\Base::$_dynamicProperties` with the un-prefixed
 	  * 	given name and a method has been defined with the `set` key, use the value of this element. Otherwise, if
 	  * 	the dynamic property is defined, and a method exists with the prefixed name, the prefixed name is used
 	  * 	instead.
 	  *
 	  *	@internal
-	  * @used-by Framework\Core\Object::__set()
+	  * @used-by Framework\Core\Base::__set()
 	  * @param string $propertyName The name of the property to determine the setter method name for.
 	  * @return string|bool The name of the method for setting the property value. False if no method can be determined.
 	  */

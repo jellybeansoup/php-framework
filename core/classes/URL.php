@@ -14,7 +14,7 @@
   * URL Class
   */
 
-	class URL extends Object {
+	class URL extends Base {
 
 //
 // Properties

@@ -14,7 +14,7 @@
   * Class Manager
   */
 
-	class Path extends Object {
+	class Path extends Base {
 
 //
 // Properties
