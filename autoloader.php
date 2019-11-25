@@ -361,7 +361,7 @@
   * @return void
   */
 
-	function __autoload( $className ) {
+	function loadClassForName( $className ) {
 		// Get the base directory
 		$basedir = defined('__BASEDIR__')?__BASEDIR__:dirname(__FILE__);
 		// Try and get a library!
@@ -380,3 +380,5 @@
 			throw new \Exception( 'Class `'.$className.'` is not available.' );
 		}
 	}
+
+	spl_autoload_register('loadClassForName');
