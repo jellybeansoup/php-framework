@@ -143,7 +143,7 @@
 			}
 			// Turn the segments into a path string
 			if( ! is_dir( $path = implode( DIRECTORY_SEPARATOR, $segments ) ) ) {
-				throw new \Exception( 'Library `'.$segments[0].'` does not exist.' );
+				throw new \Exception( 'Library `'.$namespace.'` does not exist at '.$path );
 			}
 			// Fetch and return the library
 			return self::load( $path, $namespace );
