@@ -22,10 +22,10 @@
 		$string = strtolower( $string );
 		$string = ucwords( $string );
 		$regex = '/\b(a|an|the|at|by|for|in|of|on|to|up|and|as|but|is|or|nor)\b/i';
-		$string = preg_replace_callback( $regex, create_function( '$matches', 'return strtolower($matches[0]);' ), $string );
+		$string = preg_replace_callback( $regex, function($matches) { return strtolower($matches[0]); }, $string );
 		$string = ucfirst( $string );
 		$regex = '/\bi(cloud|pad|phone|pod|device|mac)\b/i';
-		$string = preg_replace_callback( $regex, create_function( '$matches', 'return "i".ucfirst(strtolower($matches[1]));' ), $string );
+		$string = preg_replace_callback( $regex, function($matches) { return "i".ucfirst(strtolower($matches[1])); }, $string );
 		return $string;
 	}
 
