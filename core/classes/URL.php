@@ -288,12 +288,12 @@
 		public function absoluteString() {
 			// Compress the query string
 			$query = null;
-			if( count( $this->query ) ) {
+			if( !is_null( $this->query ) && count( $this->query ) > 0 ) {
 				$query = '?'.http_build_query( $this->query );
 			}
 			// Compress the query string
 			$fragment = null;
-			if( count( $this->fragment ) ) {
+			if( !is_null( $this->fragment ) && strlen( $this->fragment ) > 0 ) {
 				$fragment = '#'.$this->fragment;
 			}
 			// Path should either exist or not

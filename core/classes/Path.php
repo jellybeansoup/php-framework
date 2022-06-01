@@ -315,6 +315,7 @@
 	  */
 
 		public function trimmed() {
+			if( is_null($this->_path) ) { return ""; }
 			return trim( $this->_path, DIRECTORY_SEPARATOR." \t\n\r\0\x0B" );
 		}
 

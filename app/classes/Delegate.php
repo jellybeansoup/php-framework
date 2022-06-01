@@ -366,7 +366,7 @@
 	  * @return void
 	  */
 
-		private final function library() {
+		private function library() {
 			return \Library::forNamespace( self::classNamespace() );
 		}
 
@@ -376,7 +376,7 @@
 	  * @return void
 	  */
 
-		private final function controllers() {
+		private function controllers() {
 			$library = $this->library();
 			$library_path = path( $library->path );
 			$controllers_path = $library_path->pathByAddingComponent('controllers');
@@ -412,7 +412,7 @@
 	  * @return void
 	  */
 
-		private static final function _throwExceptionIfAbstract() {
+		private static function _throwExceptionIfAbstract() {
 			if( self::className() === 'Framework\App\Delegate' ) {
 				throw new \Exception( 'This method must be called on an extension of `Framework\App\Delegate`, and must not be called directly.' );
 			}
