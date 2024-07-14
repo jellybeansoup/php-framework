@@ -551,6 +551,16 @@
 	  *
 	  */
 
+		public function withQueryValueForKey( $key, $value ) {
+			$url = $this;
+			$url->setQueryValueForKey( $key, $value );
+			return $url;
+		}
+
+	 /**
+	  *
+	  */
+
 		public function setQueryValueForKey( $key, $value ) {
 			if( $value === null ) {
 				$this->deleteQueryValueForKey( $key );
