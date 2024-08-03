@@ -155,7 +155,12 @@
 			}
 			// Encode strings as UTF8
 			if( is_string( $data ) ) {
-				$data = mb_convert_encoding($data, 'UTF-8', 'ISO-8859-1');
+				if (function_exists('mb_convert_encoding')) {
+					$data = mb_convert_encoding($data, 'UTF-8', 'ISO-8859-1');
+				}
+				else {
+					$data = utf8_encode($data);
+				}
 			}
 			// Return the converted values
 			return $data;
