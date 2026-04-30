@@ -475,6 +475,9 @@
 			if( ! is_dir( $destinationFolder ) ) {
 				mkdir( $destinationFolder, 0777, true );
 			}
+			if( ! is_writable( $destinationFolder ) ) {
+				return false;
+			}
 			return file_put_contents( $this->absoluteString(), $value, ( $append ) ? FILE_APPEND : 0 );
 		}
 
